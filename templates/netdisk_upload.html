@@ -1,0 +1,71 @@
+<!DOCTYPE HTML>
+<!--
+	Editorial by HTML5 UP
+	html5up.net | @ajlkn
+	Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
+
+	以上为模板信息
+	作者 Splay28
+-->
+<html>
+	<head>
+		<title>中南数据_网盘</title>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+		<link rel="shortcut icon" href="{{ url_for('static', filename='favicon.png') }}">
+		<link rel="stylesheet" href={{ url_for("static",filename = "main/assets/css/main.css" ) }} />
+		<script src={{ url_for("static",filename = "main/assets/js/jquery.min.js" ) }}></script>
+		<script type="text/javascript" src={{ url_for("static",filename = "DataTables/datatables.js" ) }}></script>
+		<script src={{ url_for("static",filename = "main/assets/js/verification.js" ) }}></script>
+	</head>
+	<body class="is-preload" onload="get_v_code()">
+		
+		<!-- Wrapper -->
+		<div id="wrapper">
+
+			<!-- Main -->
+				<div id="main">
+					<div class="inner">
+
+						<!-- Header -->
+							<header id="header">
+								<a href="/index" class="logo"><strong>中南数据</strong></a>
+							</header>
+
+							<!-- Content -->
+								<section>
+									<header class="main">
+										<h1>上传文件</h1>
+									</header>
+									<hr/>
+									<!-- Content -->
+									<div id="clear_3">
+										<form method="post" action="/api/upload/file" enctype="multipart/form-data">
+											<div class="row gtr-uniform">
+												<div class="col-12">
+													<input type="text" name="keyword" id="keyword" value="" placeholder="在这里输入所有文件的关键词，用半角逗号 , 隔开" required="required" maxlength="100"/>
+												</div>
+												<!-- Break -->
+												<div class="col-12">
+													<textarea name="abstract" id="abstract" placeholder="在这里输入该次上传文件的摘要...少于100字" rows="3" required="required" maxlength="100"></textarea>
+												</div>
+												<div class="col-12">
+													<input type="file" multiple="multiple" id="file" name="file">在这里上传文件（可多选）</input>
+												</div>
+												<!-- Break -->
+												<ul><img style="width: auto; height: auto;" src="" id="v_pic" onclick="get_v_code()"></ul>
+												<ul><input id="v_in" type="text" name="v_in" required="required" placeholder="输入验证码（不区分大小写）"></ul>
+												<div class="col-12">
+													<ul id="buttons" class="actions">
+														<li><input id="submit" type="submit" value="上传" class="button primary fit" /></li>
+														<li><input type="reset" value="重置" class="button fit" /></li>
+													</ul>
+												</div>
+											</div>
+										</form>
+								</section>
+
+						</div>
+					</div>
+
+{% include "partial/footer.html" %}

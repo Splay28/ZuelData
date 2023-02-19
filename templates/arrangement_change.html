@@ -1,0 +1,111 @@
+<!DOCTYPE HTML>
+<!--
+	Editorial by HTML5 UP
+	html5up.net | @ajlkn
+	Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
+
+	以上为模板信息
+	作者 Splay28
+-->
+<html>
+	<head>
+		<title>人员安排</title>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+		<link rel="shortcut icon" href="{{ url_for('static', filename='favicon.png') }}">
+		<link rel="stylesheet" href={{ url_for("static",filename = "main/assets/css/main.css" ) }} />
+		<script src={{ url_for("static",filename = "main/assets/js/jquery.min.js" ) }}></script>
+		<script>
+			function getcontent(){
+				var lawsuit = '{{lawsuit|tojson}}';
+				var level = '{{level}}';
+				var curid = '{{curid}}';
+				var member = '{{member|tojson}}';
+				lawsuit = JSON.parse(lawsuit);
+				member = JSON.parse(member);
+				
+
+				let divlawsuit = document.getElementById("lawsuit")
+				let tr1 = document.createElement('tr')
+				let tr2 = document.createElement('tr')
+				for(i in lawsuit){
+					let td1 = document.createElement('td')
+					
+					let a1 = document.createElement('a')
+					let td2 = document.createElement('td')
+					
+					let a2 = document.createElement('a')
+					a1.innerHTML = lawsuit[i][0][0]
+					a1.href = "/user/base?url=" + lawsuit[i][0][1]
+					a1.style = "margin:0 1em 0 0;"
+					a1.id = lawsuit[i][0][0] + '_' + i
+					a2.innerHTML = lawsuit[i][1][0]
+					a2.href = "/user/base?url=" + lawsuit[i][1][1]
+					a2.style = "margin:0 1em 0 0;"
+					a2.id = lawsuit[i][1][0] + '_' + i
+					td1.appendChild(a1)
+					td2.appendChild(a2)
+					tr1.appendChild(td1)
+					tr2.appendChild(td2)
+				}
+				divlawsuit.appendChild(tr1)
+				divlawsuit.appendChild(tr2)
+
+				for(let i = 0; i < member.length; i++){
+					let a = document.createElement('a')
+					a.href = "/user/base?url=" + member[i][1]
+					a.innerHTML = member[i][0]
+					a.style = 'margin:0 0 0 1em;'
+					$('#member').append(a)
+				}
+			}
+		</script>
+	</head>
+	<body class="is-preload" onload="getcontent()">
+		
+		<!-- Wrapper -->
+		<div id="wrapper">
+
+			<!-- Main -->
+				<div id="main">
+					<div class="inner">
+
+						<!-- Header -->
+							<header id="header">
+								<a href="/index" class="logo"><strong>中南数据</strong></a>
+							</header>
+
+							<!-- Content -->
+								<section>
+									<header class="main">
+										<h1>人员安排</h1>
+									</header>
+
+									<!-- Content -->
+									<hr/>
+									<h2>诉讼部对接安排</h2>
+									<table id="lawsuittable" class="alt">
+										<thead>
+											<tr>
+												<th>周一</th>
+												<th>周二</th>
+												<th>周三</th>
+												<th>周四</th>
+												<th>周五</th>
+												<th>周六</th>
+												<th>周日</th>
+											</tr>
+										</thead>
+										<tbody id="lawsuit">
+										</tbody>
+									</table>
+
+									<hr/>
+									<h2>历届志愿者（按拼音顺序排名）</h2>
+									<p id='member'></p>
+								</section>
+
+						</div>
+					</div>
+
+{% include "partial/footer.html" %}

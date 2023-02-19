@@ -1,0 +1,92 @@
+<!DOCTYPE HTML>
+<!--
+	Editorial by HTML5 UP
+	html5up.net | @ajlkn
+	Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
+
+	以上为模板信息
+	作者 Splay28
+-->
+<html>
+	<head>
+		<title>回复待办</title>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+		<link rel="shortcut icon" href="{{ url_for('static', filename='favicon.png') }}">
+		<link rel="stylesheet" href={{ url_for("static",filename = "main/assets/css/main.css" ) }} />
+		<script src={{ url_for("static",filename = "main/assets/js/jquery.min.js" ) }}></script>
+		<script src={{ url_for("static",filename = "tinymce/js/tinymce/tinymce.min.js" ) }}></script>
+		<script src={{ url_for("static",filename = "tinymce/tinymce_setup.js" ) }}></script>
+		<script>
+			function get_content(){
+				var quotas = '{{quotas|tojson}}';
+				quotas = JSON.parse(quotas)
+
+				quotadiv = document.getElementById('quotas');
+				$('#quota_id').hide()
+				if(quotas){
+					for(let i=0;i<quotas.length;i++){
+						box = document.createElement('div');
+					}
+				}
+			}
+		</script>
+	</head>
+	<body class="is-preload" onload="get_content()">
+		
+		<!-- Wrapper -->
+		<div id="wrapper">
+
+			<!-- Main -->
+				<div id="main">
+					<div class="inner">
+
+						<!-- Header -->
+							<header id="header">
+								<a href="/index" class="logo"><strong>中南财经政法大学</strong>学生自助站</a>
+							</header>
+
+							<!-- Content -->
+								<section>
+									<header class="main">
+										<h1>提交/创建待办</h1>
+									</header>
+
+									<!-- Content -->
+									<h3>文件信息</h3>
+
+									<form method="post" action="/api/publish/file" enctype="multipart/form-data">
+										<div class="row gtr-uniform">
+											<div class="col-6 col-12-xsmall">
+												<input type="file" multiple="multiple" id="file" name="file"/>
+											</div>
+											<div class="col-6 col-12-xsmall">
+												<input type="text" name="title" id="title" value="" placeholder="案件标题" />
+											</div>
+											<!-- Break -->
+											<div class="col-12">
+												<input type="email" name="email" id="email" value="" placeholder="在此输入志愿者的邮箱，多位志愿者用半角逗号 , 隔开，用于确定任务的发起人，请认真填写" />
+												<textarea name="abstract" id="abstract" value="诉讼部同学你们好！这是 __组别__ 接待的当事人希望我们代写的文书，系 __纠纷，烦请审批，辛苦啦！" placeholder="在这里输入案件摘要" required="required" rows="6" maxlength="500"></textarea>
+												<div class="box" id="quota_box">这里是引用：</div>
+												<input type="text" name="quota_id" id="quota_id" value="" disabled="disabled"/>
+											</div>
+											
+											<!-- Break -->
+											<div class="col-12">
+												<ul class="actions">
+													<li><input type="submit" value="上传" class="primary" /></li>
+													<li><input type="reset" value="重置" /></li>
+												</ul>
+											</div>
+
+											<div id="quotas" class="col-12">
+											</div>
+										</div>
+									</form>
+
+								</section>
+
+						</div>
+					</div>
+
+{% include "partial/footer.html" %}

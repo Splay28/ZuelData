@@ -1,0 +1,105 @@
+<!DOCTYPE HTML>
+<!--
+	Dimension by HTML5 UP
+	html5up.net | @ajlkn
+	Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
+-->
+<html>
+	<head>
+		<title>修改密码</title>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+		<link rel="shortcut icon" href="{{ url_for('static', filename='favicon.png') }}">
+		<link rel="stylesheet" href='{{ url_for("static",filename = "login/css/main.css" ) }}' />
+		<noscript><link rel="stylesheet" href='{{ url_for("static",filename = "login/css/noscript.css" ) }}' /></noscript>
+		<script src='{{ url_for("static",filename = "login/js/md5.min.js") }}'></script>
+	</head>
+	<body class="is-preload">
+
+		<!-- Wrapper -->
+			<div id="wrapper">
+
+				<!-- Header -->
+					<header id="header">
+						<div class="logo">
+							<span class="icon fa-gem"></span>
+						</div>
+						<div class="content">
+							<div class="inner">
+								<h1>中南数据</h1>
+								<p style="margin: 0 0 0 0;">我们已在，舞台之上</p>
+								<p>私たちはもう、舞台の上</p>
+							</div>
+						</div>
+						<nav>
+							<ul>
+								<li><a href="#c_pwd">修改密码</a></li>
+							</ul>
+						</nav>
+					</header>
+
+				<!-- Main -->
+					<div id="main">
+
+						<!-- Login -->
+							<article id="c_pwd">
+								<h2 class="major">修改密码</h2>
+								<span class="image main"><img src="/api/random_pic?url=3" alt="" /></span>
+								<form method="post" action="#">
+									<div class="fields">
+										<div class="field" id="field">
+											<label for="pwd">设置新密码</label>
+                      						<input type="password" name="pwd" id="pwd" required="required" oninput="OnInput_p()"/>
+											<label for="pwd_c">确认密码</label>
+                      						<input type="password" name="pwd_c" id="pwd_c" required="required" oninput="OnInput_p()"/>
+											<input type="text" name="auth" id="auth" disabled="disabled" hidden="true" value="{{auth}}"/>
+										</div>
+									</div>
+									<ul class="actions">
+										<li><button type="button" class="primary" id="ajax_c_pwd"/>确认修改</li>
+										<li><p id='emsg'></p></li>
+									</ul>
+								</form>
+							</article>
+					</div>
+
+				<!-- Footer -->
+					<footer id="footer">
+						<p class="copyright">&copy; Powered by <a href="https://github.com/Splay28">Splay28</a>. All rights reserved by 中南法援</p>
+						<p class="copyright">Design: <a href="https://html5up.net">HTML5 UP</a>,使用时有修改.背景图片来自<a href="https://www.pixiv.net/artworks/99134825">てぃつ丸</a></p>
+						<p class="copyright">网页许可协议：<a href="https://html5up.net/license">Creative Commons</a> license.</p>
+						<p class="copyright"><a id="contact" href="#">联系管理员</a></p>
+					</footer>
+
+			</div>
+
+		<!-- BG -->
+			<div id="bg"></div>
+
+		<!-- Scripts -->
+			<script src='{{ url_for("static",filename = "login/js/jquery.min.js") }}'></script>
+			<script src='{{ url_for("static",filename = "login/js/browser.min.js") }}'></script>
+			<script src='{{ url_for("static",filename = "login/js/breakpoints.min.js") }}'></script>
+			<script src='{{ url_for("static",filename = "login/js/util.js") }}'></script>
+			<script src='{{ url_for("static",filename = "login/js/main.js") }}'></script>
+			<script>
+				$('#auth').hide()
+				function OnInput_p (event) {
+					if($('#pwd_c').val() != $('#pwd').val())$('#emsg').html('两次输入密码不符');
+					else $('#emsg').html('');
+				}
+				
+				con = '{{contact}}'
+				con = JSON.parse(con)
+				$('#contact').click(function () { 
+					l = '若要联系管理员，请按以下先后顺序联系：\n';
+					for(let i=con.length - 1;i>=0;i--){
+						l = l + con[i];
+						l = l + '\n';
+					}
+					l = l + '请耐心等待回复'
+					alert(l)
+				})
+			</script>
+	</body>
+</html>

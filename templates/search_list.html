@@ -1,0 +1,351 @@
+<!DOCTYPE HTML>
+<!--
+	Editorial by HTML5 UP
+	html5up.net | @ajlkn
+	Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
+
+	以上为模板信息
+	作者 Splay28
+-->
+<html>
+	<head>
+		<title>中南数据</title>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+		<link rel="shortcut icon" href="{{ url_for('static', filename='favicon.png') }}">
+		<link rel="stylesheet" href={{ url_for("static",filename = "main/assets/css/main.css" ) }} />
+		<script src={{ url_for("static",filename = "main/assets/js/jquery.min.js" ) }}></script>
+		<script type="text/javascript" src={{ url_for("static",filename = "DataTables/datatables.js" ) }}></script>
+
+		<script>
+			function getcontent(){
+				data = '{{data|tojson}}'
+				type = '{{type}}'
+				if(data == -1){
+					document.getElementById("clear").remove();
+					return;
+				}
+				data=JSON.parse(data);
+
+				//cata=['articles','assessments','lessons','notices','tags','users']
+
+				if(type == 'lessons'){
+					let lessontablebody = document.getElementById("lessontablebody")
+					for(let i=0;i<data['lessons'].length;i++){
+						let tr = document.createElement('tr')
+						let num = document.createElement('td')
+						let name = document.createElement('td')
+						let teacher = document.createElement('td')
+						let module = document.createElement('td')
+						let scoring = document.createElement('td')
+						let time = document.createElement('td')
+						let a = document.createElement('a')
+						a.innerHTML = data['lessons'][i][1]
+						a.href = '/lesson/content?url=' + data['lessons'][i][0]
+						name.innerHTML = data['lessons'][i][2]
+						teacher.innerHTML = data['lessons'][i][3]
+						if(data['lessons'][i][4] != -1)module.innerHTML = data['lessons'][i][4]
+						scoring.innerHTML = data['lessons'][i][5]
+						num.appendChild(a)
+
+						time.innerHTML = data['lessons'][i][6];
+
+						tr.appendChild(num)
+						tr.appendChild(name)
+						tr.appendChild(teacher)
+						tr.appendChild(module)
+						tr.appendChild(scoring)
+						tr.appendChild(time)
+
+						lessontablebody.appendChild(tr)
+					}
+					
+					if(!data['lessons'].length)document.getElementById("countlesson").innerHTML = "共：" + 0 + "条数据。";
+					else document.getElementById("countlesson").innerHTML = "共：" + data['lessons'].length + "条数据。";
+					$('#lessontable').DataTable({
+						info: false,
+						language: {
+							lengthMenu: '每一页显示 _MENU_ 条数据',
+							zeroRecords: '0条数据',
+							search: "在以下列表中搜索：",
+							paginate: {
+								first:      "第一页",
+								previous:   "上一页",
+								next:       "下一页",
+								last:       "最后一页"
+							}
+						},
+					});
+
+				}
+				else if(type == 'all'){
+					let lessontablebody = document.getElementById("lessontablebody")
+					for(let i=0;i<data['lessons'].length;i++){
+						let tr = document.createElement('tr')
+						let num = document.createElement('td')
+						let name = document.createElement('td')
+						let teacher = document.createElement('td')
+						let module = document.createElement('td')
+						let scoring = document.createElement('td')
+						let a = document.createElement('a')
+						a.innerHTML = data['lessons'][i][1]
+						a.href = '/lesson/content?url=' + data['lessons'][i][0]
+						name.innerHTML = data['lessons'][i][2]
+						teacher.innerHTML = data['lessons'][i][3]
+						if(data['lessons'][i][4] != -1)module.innerHTML = data['lessons'][i][4]
+						scoring.innerHTML = data['lessons'][i][5]
+						num.appendChild(a)
+
+						tr.appendChild(num)
+						tr.appendChild(name)
+						tr.appendChild(teacher)
+						tr.appendChild(module)
+						tr.appendChild(scoring)
+
+						lessontablebody.appendChild(tr)
+					}
+					
+					if(!data['lessons'].length)document.getElementById("countlesson").innerHTML = "共：" + 0 + "条数据。";
+					else document.getElementById("countlesson").innerHTML = "共：" + data['lessons'].length + "条数据。";
+					$('#lessontable').DataTable({
+						info: false,
+						language: {
+							lengthMenu: '每一页显示 _MENU_ 条数据',
+							zeroRecords: '0条数据',
+							search: "在以下列表中搜索：",
+							paginate: {
+								first:      "第一页",
+								previous:   "上一页",
+								next:       "下一页",
+								last:       "最后一页"
+							}
+						},
+					});
+
+					let blogtablebody = document.getElementById("blogtablebody")
+					for(let i=0;i<data['articles'].length;i++){
+						let tr = document.createElement('tr')
+						let title = document.createElement('td')
+						let author = document.createElement('td')
+						let abstract = document.createElement('td')
+						let tag = document.createElement('td')
+						let pubdate = document.createElement('td')
+						let a = document.createElement('a')
+						a.innerHTML = data['articles'][i][1]
+						a.href = '/blog/content?url=' + data['articles'][i][0]
+						if(!data['articles'][i][2])data['articles'][i][2] = '已注销'
+						author.innerHTML = data['articles'][i][2]
+						abstract.innerHTML = data['articles'][i][3]
+						tag.innerHTML = data['articles'][i][4]
+						pubdate.innerHTML = data['articles'][i][5]
+						title.appendChild(a)
+
+						tr.appendChild(title)
+						tr.appendChild(author)
+						tr.appendChild(abstract)
+						tr.appendChild(tag)
+						tr.appendChild(pubdate)
+
+						blogtablebody.appendChild(tr)
+					}
+				
+					if(!data['articles'].length)document.getElementById("countblog").innerHTML = "共：" + 0 + "条数据。";
+					else document.getElementById("countblog").innerHTML = "共：" + data['articles'].length + "条数据。";
+					$('#blogtable').DataTable({
+						info: false,
+						language: {
+							lengthMenu: '每一页显示 _MENU_ 条数据',
+							zeroRecords: '0条数据',
+							search: "在以下列表中搜索：",
+							paginate: {
+								first:      "第一页",
+								previous:   "上一页",
+								next:       "下一页",
+								last:       "最后一页"
+							}
+						},
+					});
+
+					let noticetablebody = document.getElementById("noticetablebody")
+					for(let i=0;i<data['notices'].length;i++){
+						let tr = document.createElement('tr')
+						let title = document.createElement('td')
+						let author = document.createElement('td')
+						let sign = document.createElement('td')
+						let pubdate = document.createElement('td')
+						let a = document.createElement('a')
+						a.innerHTML = data['notices'][i][1]
+						a.href = '/notice/content?url=' + data['notices'][i][0]
+						if(!data['notices'][i][2])data['notices'][i][2] = '已注销'
+						author.innerHTML = data['notices'][i][2]
+						sign.innerHTML = data['notices'][i][3]
+						pubdate.innerHTML = data['notices'][i][4]
+						title.appendChild(a)
+
+						tr.appendChild(title)
+						tr.appendChild(author)
+						tr.appendChild(sign)
+						tr.appendChild(pubdate)
+
+						noticetablebody.appendChild(tr)
+					}
+				
+					if(!data['notices'].length)document.getElementById("countnotice").innerHTML = "共：" + 0 + "条数据。";
+					else document.getElementById("countnotice").innerHTML = "共：" + data['notices'].length + "条数据。";
+					$('#noticetable').DataTable({
+						info: false,
+						language: {
+							lengthMenu: '每一页显示 _MENU_ 条数据',
+							zeroRecords: '0条数据',
+							search: "在以下列表中搜索：",
+							paginate: {
+								first:      "第一页",
+								previous:   "上一页",
+								next:       "下一页",
+								last:       "最后一页"
+							}
+						},
+					});
+				}
+				if(type == "lessons"){
+						$("#blogdiv").hide();
+						$("#check_blog").prop('checked',false);
+						$("#noticediv").hide();
+						$("#check_notice").prop('checked',false);
+				}
+				$("#check_lesson").click(function() {
+					checked = $("#check_lesson").prop('checked');
+					if(checked == false){$("#lessondiv").hide();$("#check_lesson").prop('checked',false);}
+					else{$("#lessondiv").show();$("#check_lesson").prop('checked',true);}
+				})
+				$("#check_blog").click(function() {
+					checked = $("#check_blog").prop('checked');
+					if(checked == false){$("#blogdiv").hide();$("#check_blog").prop('checked',false);}
+					else{$("#blogdiv").show();$("#check_blog").prop('checked',true);}
+				})
+				$("#check_notice").click(function() {
+					checked = $("#check_notice").prop('checked');
+					if(checked == false){$("#noticediv").hide();$("#check_notice").prop('checked',false);}
+					else{$("#noticediv").show();$("#check_notice").prop('checked',true);}
+				})
+			}
+		
+			
+		</script>
+	</head>
+	<body class="is-preload" onload="getcontent()">
+		
+		<!-- Wrapper -->
+		<div id="wrapper">
+
+			<!-- Main -->
+				<div id="main">
+					<div class="inner">
+
+						<!-- Header -->
+							<header id="header">
+								<a href="/index" class="logo"><strong>中南数据</strong></a>
+							</header>
+
+							<!-- Content -->
+								<section>
+									<header class="main">
+										<h1>中南数据</h1>
+												<form method="post" action="/api/search" style="margin: 0 0 0 0;">
+													<input type="text" style="float:left;width:90%" name="query" value="" placeholder="在这里输入课程名/课程号/任课老师等" maxlength="30">
+													<input type="text" name="type" value="all" style='display: none;'/>
+                    								<input type="submit" style="width:10%" value="搜索" class="primary fit">
+												</form>
+												<div class="row gtr-uniform">
+													<div class="col-4 col-12-small">
+														<input type="checkbox" id="check_lesson" name="check_lesson" checked="true">
+														<label for="check_lesson">课程</label>
+													</div>
+													<div class="col-4 col-12-small">
+														<input type="checkbox" id="check_blog" name="check_blog" checked="true">
+														<label for="check_blog">博客</label>
+													</div>
+													<div class="col-4 col-12-small">
+														<input type="checkbox" id="check_notice" name="check_notice" checked="true">
+														<label for="check_notice">公告</label>
+													</div>
+												</div>
+									</header>
+
+									<!-- Content -->
+									<div id="clear">
+										<div id="lessondiv">
+											<h2>课程列表（点击列表标题项排序，下同）</h2>
+											<table id="lessontable" class="alt">
+												<thead>
+													<tr>
+														<th>课程号</th>
+														<th>课程名</th>
+														<th>授课老师</th>
+														<th>模块</th>
+														<th>评分</th>
+														<th>更新时间</th>
+													</tr>
+												</thead>
+												<tbody id="lessontablebody">
+												</tbody>
+												<tfoot>
+													<tr>
+														<td colspan="2"></td>
+														<td id="countlesson"></td>
+													</tr>
+												</tfoot>
+											</table>
+										</div>
+										<hr/>
+										<div id="blogdiv">
+											<h2>博客</h2>
+											<table id="blogtable" class="alt">
+												<thead>
+													<tr>
+														<th>标题</th>
+														<th>作者</th>
+														<th>摘要</th>
+														<th>标签</th>
+														<th>发布时间</th>
+													</tr>
+												</thead>
+												<tbody id="blogtablebody">
+												</tbody>
+												<tfoot>
+													<tr>
+														<td colspan="2"></td>
+														<td id="countblog"></td>
+													</tr>
+												</tfoot>
+											</table>
+										</div>
+										<hr/>
+										<div id="noticediv">
+											<h2>公告</h2>
+											<table id="noticetable" class="alt">
+												<thead>
+													<tr>
+														<th>标题</th>
+														<th>作者</th>
+														<th>署名</th>
+														<th>发布时间</th>
+													</tr>
+												</thead>
+												<tbody id="noticetablebody">
+												</tbody>
+												<tfoot>
+													<tr>
+														<td colspan="2"></td>
+														<td id="countnotice"></td>
+													</tr>
+												</tfoot>
+											</table>
+										</div>
+									</div>
+								</section>
+
+						</div>
+					</div>
+
+{% include "partial/footer.html" %}

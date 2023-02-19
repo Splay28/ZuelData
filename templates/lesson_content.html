@@ -1,0 +1,288 @@
+<!DOCTYPE HTML>
+<!--
+	Editorial by HTML5 UP
+	html5up.net | @ajlkn
+	Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
+
+	以上为模板信息
+	作者 Splay28
+-->
+<html>
+	<head>
+		<title>{{num}}：{{lessonname}}</title>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+		<link rel="shortcut icon" href="{{ url_for('static', filename='favicon.png') }}">
+		<link rel="stylesheet" href={{ url_for("static",filename = "main/assets/css/main.css" ) }} />
+		<link rel="stylesheet" href={{ url_for("static",filename = "main/assets/css/process.css" ) }} />
+		<script src={{ url_for("static",filename = "main/assets/js/jquery.min.js" ) }}></script>
+		<script>
+			function getnotice() {
+				var data = '{{data|tojson}}';
+				data = JSON.parse(data);
+				var timetable = '{{timetable|tojson}}';
+				timetable = JSON.parse(timetable);
+				var scores = '{{scores|tojson}}';
+				scores = JSON.parse(scores);
+				var assessments = '{{assessments|tojson}}';
+				assessments = JSON.parse(assessments);
+
+
+				document.getElementById("timeh").innerHTML = '时间表：' + timetable[0];
+				timeb = document.getElementById("timeb");
+				for(let i = 1;i<=12;i++){
+					let tr = document.createElement('tr');
+					for(let j = 1;j<=7;j++){
+						let td = document.createElement('td');
+						td.id = j.toString() + '_' +i.toString();
+						//td.innerHTML = '0'
+						tr.appendChild(td);
+					}
+					timeb.appendChild(tr)
+				}
+				for(let i = 1;i<timetable.length;i++){
+					let day = timetable[i][0]
+					for(let j = 0;j<timetable[i][1].length;j++){
+						let id = day.toString() + '_' + timetable[i][1][j].toString();
+						document.getElementById(id).innerHTML = timetable[i][1][j].toString();
+						document.getElementById(id).style = 'background-color:#fb5458;color:#ffffff;'
+					}
+				}
+				
+				
+				
+				teacherb = document.getElementById("sameteacher")
+				for(let i=0;i<data['sameteacher'].length;i++){
+					let tr = document.createElement('tr');
+					let name = document.createElement('td');
+					let num = document.createElement('td');
+					num.innerHTML = data['sameteacher'][i][1];
+					let time = document.createElement('td');
+					time.innerHTML = data['sameteacher'][i][3];
+					let a = document.createElement('a');
+					a.href = '/lesson/content?url=' + data['sameteacher'][i][0];
+					a.innerHTML = data['sameteacher'][i][2];
+					name.appendChild(a)
+					tr.appendChild(name)
+					tr.appendChild(num)
+					tr.appendChild(time)
+
+					teacherb.appendChild(tr)
+				}
+
+				numb = document.getElementById("samenum")
+				for(let i=0;i<data['samenum'].length;i++){
+					let tr = document.createElement('tr');
+					let name = document.createElement('td');
+					let num = document.createElement('td');
+					num.innerHTML = data['samenum'][i][1];
+					let time = document.createElement('td');
+					time.innerHTML = data['samenum'][i][3];
+					let a = document.createElement('a');
+					a.href = '/lesson/content?url=' + data['samenum'][i][0];
+					a.innerHTML = data['samenum'][i][2];
+					name.appendChild(a)
+					tr.appendChild(name)
+					tr.appendChild(num)
+					tr.appendChild(time)
+
+					numb.appendChild(tr)
+				}
+
+				document.getElementById("countteacher").innerHTML = '共计：' + data['sameteacher'].length.toString() + '门课程'
+				document.getElementById("countnum").innerHTML = '共计：' + data['samenum'].length.toString() + '门课程'
+				document.getElementById("assess").href = "/assessment/publish?url=" + "{{url}}"
+
+				if((scores[0] == 0)&&(scores[1] == 0)&&(scores[2] == 0)){
+					document.getElementById('score_h').innerHTML = '该课程目前没有评分';
+
+				}
+				else{
+					$('#scoring').attr('data-percent',Math.ceil(scores[0] / 5) * 5)
+					$('#scoring').attr('class','bar moe active')
+					$('#useful').attr('data-percent',Math.ceil(scores[1] / 5) * 5)
+					$('#useful').attr('class','bar moe active')
+					$('#easy').attr('data-percent',Math.ceil(scores[2] / 5) * 5)
+					$('#easy').attr('class','bar moe active')
+				}
+
+				assessb = document.getElementById('assessb');
+				for(let i=0;i<assessments.length;i++){
+					let tr = document.createElement('tr');
+					let teacher = document.createElement('td');
+					teacher.innerHTML = assessments[i][0];
+					let time = document.createElement('td');
+					time.innerHTML =assessments[i][2];
+					let nick = document.createElement('td');
+					let a0 = document.createElement('a');
+					a0.href = '/user/base?url=' + assessments[i][6];
+					a0.innerHTML = assessments[i][1];
+					nick.appendChild(a0)
+
+					let abstract = document.createElement('td');
+					if(assessments[i][4]){
+						let a = document.createElement('a');
+						a.href = '/assessment/content?url=' + assessments[i][4];
+						a.innerHTML = assessments[i][3];
+						abstract.appendChild(a)
+					}
+					else{
+						abstract.innerHTML = assessments[i][3];
+					}
+					
+					tr.appendChild(teacher)
+					tr.appendChild(nick)
+					tr.appendChild(time)
+					tr.appendChild(abstract)
+					assessb.appendChild(tr)
+				}
+				document.getElementById('countassess').innerHTML = '共计：' + assessments.length + '条评价';
+			}
+		</script>
+	</head>
+	<body class="is-preload" onload="getnotice()">
+		
+		<!-- Wrapper -->
+		<div id="wrapper">
+
+			<!-- Main -->
+				<div id="main">
+					<div class="inner">
+
+						<!-- Header -->
+							<header id="header">
+								<a href="/index" class="logo"><strong>中南数据</strong></a>
+							</header>
+
+							<!-- Content -->
+								<section>
+									<header class="main">
+										<h1 id="title">{{num}}：{{lessonname}}</h1>
+									</header>
+									<div id="content1" class="row">
+										<div class="col-6 col-12-small">
+											<h3>课程信息</h3>
+											<p><b>注：同一老师同一课程合并为同一节课，课程时间仅供参考</b></p>
+											<div class="row">
+												
+												<div class="col-6 col-12-small">
+													
+													<ul id="lesson" class="col-6 col-12-small" style="font-size:0.9em ;">
+														<li>课程号：{{num}}</li>
+														<li>课程名：{{lessonname}}</li>
+														<li>课序号：{{serial_num}}</li>
+														<li>授课老师：{{teacher}}</li>
+														<li>上课时间：{{lessontime}}</li>
+														<li>上课周次：{{week}}</li>
+													</ul>
+												</div>
+												<div class="col-6 col-12-small">
+													<ul id="lesson" class="col-6 col-12-small" style="font-size:0.9em ;">
+														<li>所属模块：{{module}}</li>
+														<li>学分：{{credit}}</li>
+														<li>备注：{{note}}</li>
+														<li></li>
+														<li>课程数据更新时间：{{updatetime}}</li>
+													</ul>
+												</div>
+											</div>
+											<h3 id="score_h">评分</h3>
+											<div id="scoring" class="" data-percent="" data-skill="给分情况"></div>
+											<div id="useful" class="" data-percent="" data-skill="实践适用可能性"></div>
+											<div id="easy" class="" data-percent="" data-skill="易于理解"></div>
+										</div>
+										<div class="col-6 col-12-small">
+											<h3 id="timeh"></h3>
+											<table class="alt">
+												<thead>
+													<tr>
+														<th>Mon</th>
+														<th>Tue</th>
+														<th>Wed</th>
+														<th>Thu</th>
+														<th>Fri</th>
+														<th>Sat</th>
+														<th>Sun</th>
+													</tr>
+												</thead>
+												<tbody id="timeb">
+												</tbody>
+												<tfoot>
+													<tr>
+														<td colspan="2"></td>
+														<td id="counttime"></td>
+													</tr>
+												</tfoot>
+											</table>
+										</div>
+									</div>
+									<div id="content2" class="row">
+										<div class="col-6 col-12-small">
+											<h3>这个老师的其他课程：</h3>
+											<table>
+												<thead>
+													<tr>
+														<th>课程名</th>
+														<th>课程号</th>
+														<th>上课时间</th>
+													</tr>
+												</thead>
+												<tbody id="sameteacher">
+												</tbody>
+												<tfoot>
+													<tr>
+														<td colspan="2"></td>
+														<td id="countteacher"></td>
+													</tr>
+												</tfoot>
+											</table>
+										</div>
+										<div class="col-6 col-12-small">
+											<h3>这个课程的其他课堂：</h3>
+											<table>
+												<thead>
+													<tr>
+														<th>授课老师</th>
+														<th>课序号</th>
+														<th>上课时间</th>
+													</tr>
+												</thead>
+												<tbody id="samenum">
+												</tbody>
+												<tfoot>
+													<tr>
+														<td colspan="2"></td>
+														<td id="countnum"></td>
+													</tr>
+												</tfoot>
+											</table>
+										</div>
+									</div>
+
+									<h2><a id="assess">课程评价（点我评价该课程）</a></h2>
+									<table>
+										<thead>
+											<tr>
+												<th>授课老师</th>
+												<th>评论用户</th>
+												<th>发布时间</th>
+												<th>主要内容</th>
+											</tr>
+										</thead>
+										<tbody id="assessb">
+										</tbody>
+										<tfoot>
+											<tr>
+												<td colspan="3"></td>
+												<td id="countassess"></td>
+											</tr>
+										</tfoot>
+									</table>
+									<!-- Elements -->
+
+								</section>
+
+						</div>
+					</div>
+
+{% include "partial/footer.html" %}

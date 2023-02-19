@@ -1,0 +1,140 @@
+<!DOCTYPE HTML>
+<!--
+	Editorial by HTML5 UP
+	html5up.net | @ajlkn
+	Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
+
+	以上为模板信息
+	作者 Splay28
+-->
+<html>
+	<head>
+		<title>{{title}}</title>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+		<link rel="stylesheet" href={{ url_for("static",filename = "main/assets/css/main.css" ) }} />
+		<link rel="shortcut icon" href="{{ url_for('static', filename='favicon.png') }}">
+		<script src={{ url_for("static",filename = "main/assets/js/jquery.min.js" ) }}></script>
+		<script>
+			function checkVisible(elm, evalType) {
+				elm = document.getElementById("cover");
+				evalType = evalType || "visible";
+
+				var vpH = $(window).height(), // Viewport Height
+					st = $(window).scrollTop(), // Scroll Top
+					y = $(elm).offset().top,
+					elementHeight = $(elm).height();
+
+				elm = document.getElementById("cover");
+				evalType = evalType || "visible";
+				
+				if (st < y) {
+					v = 0;
+				}
+				else if(st > (y + elementHeight)){
+					v = 100;
+				}
+				else {
+					v = 100 * (st - y) / elementHeight;
+				}
+				
+				coverstyle = "position:absolute; top:" + v + "%; left:50%; transform: translate(-50% , -" + v + "%);";
+				elm.style = coverstyle;
+			}
+
+			function getnotice() {
+				
+				let data = '{{file|tojson}}';
+				data = JSON.parse(data);
+				data = Array.from(data);
+				
+				let cc = '{{filecc}}';
+				let is_self = '{{is_self}}';
+				
+				let content = document.getElementById("content")
+				let h4 = document.createElement("h4")
+				h4.innerHTML = "文件下载"
+				content.appendChild(h4)
+				let box = document.createElement("ul")
+				for(let i=0;i<cc;i++){
+					let url = document.createElement("a");
+					let icon = document.createElement("a");
+					let li = document.createElement("li");
+					let span = document.createElement("span");
+
+					url.href = "/api/download/file?url=" + data[i]['url'];
+					url.innerHTML = data[i]['title'];
+					icon.href = "/api/download/file?url=" + data[i]['url'];
+					icon.className = "icon far fa-file" + data[i]['type'];
+					span.className = "label";
+					span.innerHTML = data[i]['title'];
+
+					icon.appendChild(span);
+					li.appendChild(icon);
+					li.appendChild(url);
+
+					box.appendChild(li);
+					
+				}
+				content.appendChild(box)
+				content.appendChild(document.createElement("hr"))
+
+				let cover = '/api/cover?url=' + data[cc]['cover'];
+				
+				document.getElementById("cover").src = cover
+
+				box = document.getElementById("box")
+				let blog = '{{content|tojson}}'
+				box.innerHTML=blog
+
+				let imgs = box.getElementsByTagName("img")
+				for(let i=0;i<imgs.length;i++){
+					let rate = parseInt(imgs[i].height)/parseInt(imgs[i].width)
+					imgs[i].style.width = '100%'
+					imgs[i].style.height = (rate*100).toString() + '%'
+
+				}
+				if(is_self!=0){
+					let b="<a class='button primary' href='" + is_self + "'>删除</p>";
+					$('#content').append(b)
+				}
+			}
+			
+			window.onscroll = checkVisible;
+		</script>
+	</head>
+	<body class="is-preload" onload="getnotice()">
+		
+		<!-- Wrapper -->
+		<div id="wrapper">
+
+			<!-- Main -->
+				<div id="main">
+					<div class="inner">
+
+						<!-- Header -->
+							<header id="header">
+								<a href="/index" class="logo"><strong>中南数据</strong></a>
+							</header>
+
+							<!-- Content -->
+								<section>
+									<span class="image main" style="width: 100%; height: 56.25vw; overflow: hidden; align-items: center; "><img id="cover" style="position:absolute; top:50%; left:50%; transform: translate(-50% , -50%);" src="" /></span>
+									<header class="main">
+										<h1 id="title">{{title}}</h1>
+									</header>
+
+									<div id="content">
+										<h2 id="footnote">用户：{{author}}，发布于：{{pubdate}}</h2>
+										<div id="box"></div>
+										<p style="float: right;">关键词：{{keyword}}</p>
+									</div>
+
+									<!-- Elements -->
+
+								</section>
+
+						</div>
+					</div>
+
+{% include "partial/footer.html" %}

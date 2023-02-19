@@ -1,0 +1,86 @@
+<!-- Sidebar -->
+<div id="sidebar">
+    <div class="inner">
+
+        <!-- Search -->
+            <section id="search" class="alt">
+                <form method="post" action="/api/search">
+                    <input type="text" name="query" placeholder="从这里搜索" />
+                    <input type="text" name="type" value="all" style='display: none;'/>
+                    <input type="submit" value="搜索" class="primary fit">
+                </form>
+            </section>
+
+        <!-- Menu -->
+            <nav id="menu">
+                <header class="major">
+                    <h2>主菜单</h2>
+                </header>
+                <ul>
+                    <li><a href="/index">首页</a></li>
+                    <li><a href="/lesson/list">课程&评价</a></li>
+                    <li><a href="/blog/page">博客</a></li>
+                    <li id="task_footer"><a href="/task/list">案件一览</a></li>
+                    <li id="netdisk_footer"><a href="/netdisk">网盘</a></li>
+                    <li>
+                        <span class="opener">创作</span>
+                        <ul>
+                            <li id="blog_footer"><a href="/blog/publish">发布博客</a></li>
+                            <li id="file_footer"><a href="/task/publish">创建任务</a></li>
+                            <li id="notice_footer"><a href="/notice/publish">发布公告</a></li>
+                            <li id="back_footer"><a href="/backstage">后台管理</a></li>
+                        </ul>
+                    </li>
+                    <li><a href="/notice/page">公告</a></li>
+                    <li><a href="/arrangement">人员安排</a></li>
+                    <li><a href="/user/setting">修改用户设置</a></li>
+                    <li><a href="/about">关于</a></li>
+                    <li><a href="/logout">退出登录</a></li>
+                </ul>
+            </nav>
+
+        <!-- Section -->
+            <section>
+                <header class="major">
+                    <h2>博客推荐</h2>
+                </header>
+                
+                <div id="posts" class="mini-posts"></div>
+                <ul class="actions">
+                    <li><a href="/blog/page" class="button">了解更多</a></li>
+                </ul>
+            </section>
+
+        <!-- Section -->
+            <section>
+                <header class="major">
+                    <h2>联系我们</h2>
+                </header>
+                <p>中南数据（ZhongNanData）是一个自主组织运维的博客数据系统，致力于<del>追求实质正义并</del>提供法学学科从理论到实践的桥梁。</p>
+                <ul class="contact">
+                    <li class="icon solid fa-envelope">如无特殊情况，我们会在每学期第1-14个教学周的工作日于校内、洪山区人民法院和东湖新技术开发区人民法院安排值班岗位，请在线下联络我们</li>
+                    <li class="icon solid fa-phone">(027) 8838-6792</li>
+                    <li class="icon solid fa-home">中南财经政法大学文治楼东法律援助与保护中心<br />
+                    湖北省武汉市洪山区南湖大道182号</li>
+                </ul>
+            </section>
+
+        <!-- Footer -->
+            <footer id="footer">
+                <p class="copyright">&copy;All rights reserved by 中南法援. Powered by: <a href="https://github.com/Splay28">Splay28</a>/<a href="https://user.qzone.qq.com/1176630472">申君毅</a>.</p>
+                <p class="copyright"><a href="https://beian.miit.gov.cn/">鄂ICP备2023001080号</a></p>
+            </footer>
+
+    </div>
+</div>
+
+</div>
+
+<!-- Scripts -->
+<script src={{ url_for("static",filename = "main/assets/js/browser.min.js" ) }}></script>
+<script src={{ url_for("static",filename = "main/assets/js/breakpoints.min.js" ) }}></script>
+<script src={{ url_for("static",filename = "main/assets/js/util.js" ) }}></script>
+<script src={{ url_for("static",filename = "main/assets/js/main.js" ) }}></script>
+
+</body>
+</html>

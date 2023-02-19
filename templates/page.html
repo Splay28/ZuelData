@@ -1,0 +1,160 @@
+<!DOCTYPE HTML>
+<!--
+	Editorial by HTML5 UP
+	html5up.net | @ajlkn
+	Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
+
+	以上为模板信息
+	作者 Splay28
+-->
+<html>
+	<head>
+		<title>中南数据</title>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+		<link rel="shortcut icon" href="{{ url_for('static', filename='favicon.png') }}">
+		<link rel="stylesheet" href={{ url_for("static",filename = "main/assets/css/main.css" ) }} />
+		<script src={{ url_for("static",filename = "main/assets/js/jquery.min.js" ) }}></script>
+		<script>
+			function getcontent() {
+				var type = '{{type}}'
+				var pn = '{{pn}}'
+				var psum = '{{psum}}'
+				var data = '{{content|tojson}}';
+				data = JSON.parse(data)
+				var count = '{{count}}'
+				var box = document.getElementById("content_box");
+				for(let i=0;i<count;i++){
+					let newel = document.createElement("div");
+					let title = document.createElement("h2");
+					let url = document.createElement("a");
+					let content = document.createElement("p");
+					let sign_pubdate = document.createElement("p");
+					sign_pubdate.style = "fontsize:14em;margin:0 0 0 0;color:#000000;"
+					let br = document.createElement("br");
+					let footnote = document.createElement("div");
+					url.href = data[i]['url'];
+					title.innerHTML = data[i]['title'];
+					content.innerHTML = data[i]['abstract'];
+					sign_pubdate.innerHTML = '署名：' + data[i]['sign'] + '，发布于：' +data[i]['pubdate'];
+
+					url.appendChild(title);
+					newel.appendChild(url);
+					footnote.appendChild(sign_pubdate);
+					newel.appendChild(footnote);
+					newel.appendChild(content);
+
+					if(type == 'blog'){
+						let div = document.createElement("div");
+						div.className = "row"
+						let img = document.createElement("img");
+						let url_img = document.createElement("a");
+						url_img.href = data[i]['url'];
+						img.style="width: 100%;"
+						img.src = data[i]['cover'];
+						url_img.appendChild(img)
+
+						let keyword = data[i]['keyword'];
+						let key = document.createElement("p");
+						content.style = 'margin:0 0 0 0;'
+						key.innerHTML = '关键词：' + keyword;
+						newel.appendChild(key);
+						newel.className = "col-6 col-12-small"
+						url_img.className = "image col-6 col-12-small"
+
+						div.appendChild(newel)
+						
+						box.appendChild(div);
+						let h = div.offsetHeight
+						url_img.style="height:"+h+'px;'
+						div.appendChild(url_img)
+						div.style = "margin:0 0 2em 0;"
+
+					}
+					else{
+						newel.style = "margin:0 0 2em 0;"
+						box.appendChild(newel);
+					}
+				}
+		
+				var pagebox = document.getElementById("pagination")
+				if(pn == 1){
+					let li = document.createElement('li')
+					let pup = document.createElement('span')
+					pup.className="button disabled"
+					pup.innerHTML = "上一页"
+					li.appendChild(pup)
+					pagebox.appendChild(li)
+				}
+				else{
+					let li = document.createElement('li')
+					let pup = document.createElement('a')
+					pup.href = '/' + type + '/page?pn=' + (pn - 1)
+					pup.innerHTML = "上一页"
+					li.appendChild(pup)
+					pagebox.appendChild(li)
+				}
+				for(let i=1;i<=psum;i++){
+					let li = document.createElement('li')
+					let pg = document.createElement('a')
+					pg.href = '/' + type + '/page?pn=' + (pg)
+					if(i == pn)pg.className="page active"
+					else pg.className="page"
+					pg.innerHTML = pn
+					li.appendChild(pg)
+					pagebox.appendChild(li)
+				}	
+				if(pn == psum){
+					let li = document.createElement('li')
+					let pup = document.createElement('span')
+					pup.className="button disabled"
+					pup.innerHTML = "下一页"
+					li.appendChild(pup)
+					pagebox.appendChild(li)
+				}
+				else{
+					let li = document.createElement('li')
+					let pup = document.createElement('a')
+					pup.href = '/' + type + '/page?pn=' + (pn + 1)
+					pup.innerHTML = "上一页"
+					li.appendChild(pup)
+					pagebox.appendChild(li)
+				}
+			}
+		</script>
+	</head>
+	<body class="is-preload" onload="getcontent()">
+		
+		<!-- Wrapper -->
+		<div id="wrapper">
+
+			<!-- Main -->
+				<div id="main">
+					<div class="inner">
+
+						<!-- Header -->
+							<header id="header">
+								<a href="/index" class="logo"><strong>中南数据</strong></a>
+							</header>
+
+							<!-- Content -->
+								<section>
+									
+									<header class="main">
+										<h1>{{title_type}}</h1>
+									</header>
+									<hr class="major" />
+									<!-- Content -->
+									
+									<div id="content_box">
+									</div>
+
+									<ul id="pagination" class="pagination">
+									</ul>
+
+								</section>
+
+						</div>
+					</div>
+
+{% include "partial/footer.html" %}

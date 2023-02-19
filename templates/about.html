@@ -1,0 +1,161 @@
+<!DOCTYPE HTML>
+<!--
+	Editorial by HTML5 UP
+	html5up.net | @ajlkn
+	Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
+
+	以上为模板信息
+	作者 Splay28
+-->
+<html>
+	<head>
+		<title>关于中南数据</title>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+		<link rel="shortcut icon" href="{{ url_for('static', filename='favicon.png') }}">
+		<link rel="stylesheet" href={{ url_for("static",filename = "main/assets/css/main.css" ) }} />
+		<script src={{ url_for("static",filename = "main/assets/js/jquery.min.js" ) }}></script>
+	</head>
+	<body class="is-preload">
+		
+		<!-- Wrapper -->
+		<div id="wrapper" >
+
+			<!-- Main -->
+				<div id="main" >
+					<div class="inner">
+
+						<!-- Header -->
+							<header id="header">
+								<a href="/index" class="logo"><strong>中南数据</strong></a>
+							</header>
+
+							<!-- Content -->
+								<section>
+									<header class="main">
+										<h1>关于我们</h1>
+									</header>
+									<hr>
+									<h2>谢绝一切极端政治人士使用</h2>
+									<hr>
+									<h2>写在前面</h2>
+									<blockquote>
+										从步枪的枪管到天空中的焰火，新的动力不断产生。甚至新印刷的书刊里安安静静的文字也蕴含着巨大变化。这个世界曾经又大又神秘，如今已变得越来越小，越来越熟悉。然而，总有问题有待解决，总有信仰需要经受考验，总有民族认同需要形成。
+									</blockquote>
+									
+									<h2 id="content">中南法援</h2>
+									<p>中南财经政法大学法律援助与保护中心（以下简称中南法援）是由中南财经政法大学法学院领导的，在精通法律理论和实践的法学专家、学者，以及热心公益教育事业的老师指导下，由专业基础扎实、责任感强、吃苦耐劳的法学专业在校学生自愿组成的，面向中南财经政法大学全体师生和社会进行博雅读书交流和提供法律援助服务的组织。中南法援于2000年5月在时任校长吴汉东、副校长陈小君的关心指导下，由彭锡华博士发起设立。中南法援成立伊始，便确立了“一面法律之盾，一颗仁爱之心，一双援助之手”的基本理念，每年在大一新生中招募法援预备队成员作为教学对象和提供公益服务的志愿者，集聚一批有法律理想、公益热情的同学在老师的指导下进行阶梯式培养，内容以读书为主，伴有社区服务、法庭观摩、讲座学习等活动，以培养其法律理论与法律实务能力。大二下学期通过考核选拔出优秀突出的学生成为中南法援正式志愿者，参与定期的案例分享会，进行实际的法律援助服务。</p>
+									<hr/>
+									<div class="row">
+										<div class="box">
+											<span class="icon solid fa-code"></span>
+											<h3>前端 Javascript</h3>
+											<span class="icon solid fa-terminal"></span>
+											<h3>后端 Python-Flask</h3>
+											<p>中南数据整个系统作为公益项目运维，没有盈利，网站的活动依赖于用户们的共同维护与支持。如果你想参与运维并有以下一项或多项经验，欢迎提出各种意见与建议，当然如果没有也欢迎进群讨论，QQ群号： </p>
+										</div>
+									</div>
+									<hr/>
+									<h2>相关协议</h2>
+									<div class="row">
+										
+										<div class="col-6 col-12-small">
+											<h3>许可协议</h3>
+											<p>本站所有内容除另有声明，均采用<a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh">署名-非商业性使用-相同方式共享 4.0 国际 (CC BY-NC-SA 4.0) </a>进行授权。在对本站任何内容进行包括不限于任何形式的复制、发行、展览、表演、放映、广播、信息网络传播、摄制、汇编、改编、翻译等使用，必须注明从《中南数据》转载上述内容，并保留原作者的相关信息、提供版权标识、许可协议标识、免责标识和作品链接；此外，除非获得原作者另行许可，不得将本站内容或由其衍生作品用于商业目的。 </p>
+										</div>
+										<div class="col-6 col-12-small">
+											<h3>免责声明</h3>
+											<p>本站所有内容除另有声明，均不代表网站运维团队的观点，所有违规（包括但不限于涉黄、涉政、暴力、宣传犯罪、邪教、毒品及其他任何违反公共秩序和善良风俗）内容一经发现立即删除并封号，严重违规者直接删除账号，是否违规由网站管理员判断，进入系统即表示同意上述协议。</p>
+										</div>
+									</div>
+								</section>
+						</div>
+					</div>
+
+				<!-- Sidebar -->
+				<div id="sidebar">
+					<div class="inner">
+
+						<!-- Search -->
+							<section id="search" class="alt">
+								<form method="post" action="/api/search">
+									<input type="text" name="query" placeholder="从这里搜索" />
+									<input type="text" name="type" value="all" style='display: none;'/>
+									<input type="submit" value="搜索" class="primary fit">
+								</form>
+							</section>
+
+						<!-- Menu -->
+						<nav id="menu">
+							<header class="major">
+								<h2>主菜单</h2>
+							</header>
+							<ul>
+								<li><a href="/index">首页</a></li>
+								<li><a href="/lesson/list">课程&评价</a></li>
+								<li><a href="/blog/page">博客</a></li>
+								<li><a href="/task/list">案件一览</a></li>
+								<li id="netdisk_footer"><a href="/netdisk">网盘</a></li>
+								<li>
+									<span class="opener">创作</span>
+									<ul>
+										<li id="blog_footer"><a href="/blog/publish">发布博客</a></li>
+										<li id="file_footer"><a href="/task/publish">创建任务</a></li>
+										<li id="notice_footer"><a href="/notice/publish">发布公告</a></li>
+										<li id="back_footer"><a href="/backstage">后台管理</a></li>
+									</ul>
+								</li>
+								<li><a href="/notice/page">公告</a></li>
+								<li><a href="/arrangement">人员安排</a></li>
+								<li><a href="/user/setting">修改用户设置</a></li>
+								<li><a href="/about">关于</a></li>
+								<li><a href="/logout">退出登录</a></li>
+							</ul>
+						</nav>
+
+						<!-- Section -->
+							<section>
+								<header class="major">
+									<h2>博客推荐</h2>
+								</header>
+								
+								<div id="posts" class="mini-posts"></div>
+								<ul class="actions">
+									<li><a href="/blog/page" class="button">了解更多</a></li>
+								</ul>
+							</section>
+
+						<!-- Section -->
+							<section>
+								<header class="major">
+									<h2>联系我们</h2>
+								</header>
+								<p>中南数据（ZN Data）是一个自主组织运维的博客数据系统，致力于<del>追求实质正义并</del>提供法学学科从理论到实践的桥梁。</p>
+								<ul class="contact">
+									<li class="icon solid fa-envelope">如无特殊情况，我们会在每学期第1-14个教学周的工作日于校内、洪山区人民法院和东湖新技术开发区人民法院安排值班岗位，请在线下联络我们</li>
+									<li class="icon solid fa-phone">(027) 8838-6792</li>
+									<li class="icon solid fa-home">中南财经政法大学文治楼东法律援助与保护中心<br />
+									湖北省武汉市洪山区南湖大道182号</li>
+								</ul>
+							</section>
+
+						<!-- Footer -->
+							<footer id="footer">
+								<p class="copyright">&copy;All rights reserved by 中南法援. Powered by: <a href="https://github.com/Splay28">Splay28</a>/<a href="https://user.qzone.qq.com/1176630472">申君毅</a>.</p>
+								<p class="copyright"><a href="https://beian.miit.gov.cn/">鄂ICP备2023001080号</a></p>
+							</footer>
+
+					</div>
+				</div>
+
+			</div>
+
+<!-- Scripts -->
+<script src={{ url_for("static",filename = "main/assets/js/browser.min.js" ) }}></script>
+<script src={{ url_for("static",filename = "main/assets/js/breakpoints.min.js" ) }}></script>
+<script src={{ url_for("static",filename = "main/assets/js/util.js" ) }}></script>
+<script src={{ url_for("static",filename = "main/assets/js/main.js" ) }}></script>
+<script src={{ url_for("static",filename = "main/assets/js/about.js" ) }}></script>
+
+</body>
+</html>

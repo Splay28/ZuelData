@@ -1,0 +1,67 @@
+<!DOCTYPE HTML>
+<!--
+	Editorial by HTML5 UP
+	html5up.net | @ajlkn
+	Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
+
+	以上为模板信息
+	作者 Splay28
+-->
+<html>
+	<head>
+		<title>中南数据</title>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+		<link rel="stylesheet" href={{ url_for("static",filename = "main/assets/css/main.css" ) }} />
+		<link rel="shortcut icon" href="{{ url_for('static', filename='favicon.png') }}">
+		<script src={{ url_for("static",filename = "main/assets/js/jquery.min.js" ) }}></script>
+		<script>
+			function getnotice() {
+				box = document.getElementById("box")
+				let blog = '{{content|tojson}}'
+				box.innerHTML=blog
+
+				let auth = '{{auth|tojson}}'
+				if(!auth){
+					$('#del').hide()
+				}
+			}
+		</script>
+	</head>
+	<body class="is-preload" onload="getnotice()">
+		
+		<!-- Wrapper -->
+		<div id="wrapper">
+
+			<!-- Main -->
+				<div id="main">
+					<div class="inner">
+
+						<!-- Header -->
+							<header id="header">
+								<a href="/index" class="logo"><strong>中南数据</strong></a>
+							</header>
+
+							<!-- Content -->
+								<section>
+									<header class="main">
+										<h1 id="title">{{name}}，{{teacher}}</h1>
+									</header>
+
+									<div id="content">
+										<h2 id="footnote">用户：{{author}}，发布于：{{pubdate}}</h2>
+										<h3>摘要：</h3>
+										<p>{{abstract}}</p>
+										<div id="box" class="box"></div>
+										<p style="float: right;">课程号：{{num}}</p>
+										<a id="del" class="button primary" href="/api/delete?type=assessment&url={{url}}">删除</a>
+									</div>
+
+									<!-- Elements -->
+
+								</section>
+
+						</div>
+					</div>
+
+{% include "partial/footer.html" %}

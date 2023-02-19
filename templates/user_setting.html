@@ -1,0 +1,205 @@
+<!DOCTYPE HTML>
+<!--
+	Editorial by HTML5 UP
+	html5up.net | @ajlkn
+	Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
+
+	以上为模板信息
+	作者 Splay28
+-->
+<html>
+	<head>
+		<title>修改用户数据</title>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+		<link rel="shortcut icon" href="{{ url_for('static', filename='favicon.png') }}">
+		<link rel="stylesheet" href={{ url_for("static",filename = "main/assets/css/main.css" ) }} />
+		<link rel="stylesheet" href={{ url_for("static",filename = "main/assets/css/util.css" ) }} />
+		<script src={{ url_for("static",filename = "main/assets/js/jquery.min.js" ) }}></script>
+		<script>
+			var url=''
+			function getcontent(){
+				var level = '{{level}}';
+				var is_self = '{{is_self}}';
+				var data = '{{data|tojson}}';
+				data = JSON.parse(data)
+				data = Array.from(data)
+				url=data[0]
+				document.getElementById("email").disabled = true;
+				if(is_self == 0){
+					document.getElementById("nick").disabled = true;
+					document.getElementById("sig").disabled =true
+				}
+				if(level == 'admin'){
+					document.getElementById("level").disabled = true;
+				}
+				if(level == 'norm'){
+					document.getElementById("level").disabled = true;
+					$('#level_d').hide()
+					document.getElementById("name").disabled = true;
+					document.getElementById("num").disabled = true;
+				}
+				document.getElementById("usr").value = data[0];
+				document.getElementById("email").value = data[1];
+				document.getElementById("nick").value = data[2];
+				document.getElementById("level").value = data[3];
+				document.getElementById("name").value = data[4];
+				document.getElementById("num").value = data[5];
+				document.getElementById("sig").value = data[6];
+
+				$('#w_off').click(function(){  
+					var conf=confirm("注销账号将无法使用本站大部分功能，确定注销吗？")
+					var pwd_off=$('#w_off_pwd').val()
+					if(conf){
+						var m = {
+							data: JSON.stringify({
+							'id': url,
+							'pwd': pwd_off
+							}),
+						}
+						$.ajax({  
+							url: '/api/write_off',   
+							type: 'POST',  
+							dataType: 'json',  
+							data: m,  
+							success: function(m){  
+									if ("注销成功！" === m){
+										alert("注销成功！")
+										window.location.assign("/login")
+									}
+									else{
+										alert("操作无效！")
+									}
+								}, 
+							error: function(m){  
+									alert("操作无效！")
+								}  
+						});  
+					}
+				});  
+
+				$('#c_pwd').click(function () {  
+					clicked = $(this).attr('name');
+					var email = $('#email').val();;
+					if (!(email)) {
+						alert('数据错误！');
+						return;
+					}
+					var data = {
+						data: JSON.stringify({
+						'email': email,
+						}),
+					}
+					$.ajax({  
+						url: '/api/change_pwd_request',   
+						type: 'POST',  
+						dataType: 'json',  
+						data: data,  
+						success: function(data){  
+							alert(data)
+							window.location.assign("/logout")
+							},  
+						error: function(data){  
+
+							}  
+					});  
+				}); 
+
+				var btn_1=document.getElementById("w_off_b");
+				var close=document.getElementsByClassName("close");
+				var dialog=document.getElementsByClassName("dialog");
+				var form_1=document.getElementsByClassName("form_1");
+				btn_1.addEventListener('click',function(){
+					form_1[0].className="form_1 open";	
+				})
+				close[0].addEventListener('click',function(){
+					form_1[0].className="form_1";
+				})
+
+			};
+		</script>
+	</head>
+	<body class="is-preload" onload="getcontent()">
+		
+		<!-- Wrapper -->
+		<div id="wrapper">
+
+			<!-- Main -->
+				<div id="main">
+					<div class="inner">
+
+						<!-- Header -->
+							<header id="header">
+								<a href="/index" class="logo"><strong>中南数据</strong></a>
+							</header>
+
+							<!-- Content -->
+								<section>
+									<header class="main">
+										<h1>修改用户数据</h1>
+									</header>
+
+									<!-- Content -->
+									<h3>用户信息</h3>
+
+									<div class="form_1">
+										<form >
+											<div class="input_1"><div class="login_logo">注销用户</div><div class="close">X</div></div>
+											<hr>
+											<div class="input_1"><h3>注销不同于退出登录，要注销用户，请输入密码</h3></div>
+											<div class="input_1"><input id="w_off_pwd" type="password" name="password" placeholder="密码"></div>
+											<div class="input_1"><a id="w_off" class="button submit_1" >提交</a></div>
+										</form>
+									</div>
+
+									<form id="m_form" method="post" action="/api/user/setting" enctype="multipart/form-data">
+										<div id="form_div" class="row gtr-uniform">
+											<p>注：请正确填写信息，否则可能影响系统内功能使用，某些选项需要更高的权限才能修改</p>
+											<div class="col-6 col-12-xsmall">
+												<h4>用户昵称</h4>
+												<input type="text" name="nick" id="nick" value="" placeholder="用户昵称" maxlength="28" required="required"/>
+											</div>
+											<div class="col-6 col-12-xsmall">
+												<h4 id="realname">真实姓名</h4>
+												<input type="text" name="name" id="name" value="" placeholder="真实姓名" let maxlength="28" required="required"/>
+											</div>
+											<div class="col-6 col-12-xsmall">
+												<h4>电子邮箱</h4>
+												<input type="email" name="email" id="email" value="" placeholder="电子邮箱" maxlength="28" required="required"/>
+											</div>
+											<div class="col-6 col-12-xsmall">
+												<h4>学号</h4>
+												<input type="text" name="num" id="num" value="" placeholder="学号" let maxlength="28" required="required"/>
+											</div>
+											<div id="level_d" class="col-6 col-12-xsmall">
+												<h4>用户身份</h4>
+												<select let name="level" id="level">
+													<option value="root">执行主任/数据管理员</option>
+													<option value="admin">内阁阁员/各组组长</option>
+													<option value="volunteer">志愿者</option>
+													<option value="norm">普通用户</option>
+												</select>
+											</div>
+											<div class="col-12">
+												<h4>个性签名</h4>
+												<input type="text" name="sig" id="sig" value="" placeholder="个性签名..." maxlength="100"/>
+											</div>
+											<!-- Break -->
+											<input type="text" name="usr" id="usr" value="" style="display: none;"/>
+											<div class="col-12">
+												<ul class="actions">
+													<li><input type="submit" value="确定修改" class="primary" /></li>
+													<li><a class="button primary" id="c_pwd">修改密码</a></li>
+													<li><a class="button primary" id="show_code" href="/api/code">我的邀请码</a></li>
+													<li><a class="button primary" id="w_off_b">注销</a></li>
+												</ul>
+											</div>
+										</div>
+									</form>
+
+								</section>
+
+						</div>
+					</div>
+
+{% include "partial/footer.html" %}

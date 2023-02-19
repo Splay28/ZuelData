@@ -1,0 +1,43 @@
+{% include "partial/header.html" %}
+
+							<!-- Content -->
+								<section>
+									<header class="main">
+										<h1>发布公告</h1>
+									</header>
+
+									<!-- Content -->
+									<h3>公告内容</h3>
+
+									<form method="post" action="/api/upload/notice" enctype="multipart/form-data">
+										<div class="row gtr-uniform">
+											<div class="col-6 col-12-xsmall">
+												<input type="text" name="title" id="title" value="" placeholder="公告标题" maxlength="29" required="required"/>
+											</div>
+											<div class="col-6 col-12-xsmall">
+												<input type="text" name="sign" id="sign" value="" placeholder="署名" maxlength="9" required="required"/>
+											</div>
+											<!-- Break -->
+											<div class="col-12">
+												<input type="file" multiple="multiple" id="file" name="file">（如果你需要上传附件，请在左侧上传）</input>
+											</div>
+											<!-- Break -->
+											<div class="col-12">
+												<textarea name="content" id="content" placeholder="在这里输入公告的正文" rows="6" required="required"></textarea>
+											</div>
+											<!-- Break -->
+											<div class="col-12">
+												<ul class="actions">
+													<li><input type="submit" value="发布" class="primary" /></li>
+													<li><input type="reset" value="重置" /></li>
+												</ul>
+											</div>
+										</div>
+									</form>
+
+								</section>
+
+						</div>
+					</div>
+
+{% include "partial/footer.html" %}

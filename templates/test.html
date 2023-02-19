@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+<!-- head -->
+<head>
+  <link rel="stylesheet" href={{ url_for("static",filename = "main/assets/css/main.css" ) }} />
+  <title>图片登录验证</title>
+</head>
+<body>
+    <div class="row gtr-uniform">
+     <input class="col-6 col-12-xsmall" type="text" value="" placeholder="请输入验证码（不区分大小写）" id ="verification_input">
+     <canvas id="verification_canvas" onclick="dj()" class="col-6 col-12-xsmall" style="border: 1px solid #ccc; border-radius: 5px;"></canvas>
+     <button class="primary fit" onclick="sublim()">提交</button>
+     <script src={{ url_for("static",filename = "main/assets/js/verification.js" ) }}></script>
+    </div>
+</body>
+
+</html>

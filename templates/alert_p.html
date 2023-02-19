@@ -1,0 +1,22 @@
+{% include "partial/header.html" %}
+
+							<!-- Content -->
+								<section>
+									<header class="main">
+										<h1>{{title}}</h1>
+									</header>
+									<div id="container"></div>
+									<script>
+										msg = '{{msg}}'
+										a = msg.split(';')
+										for(i=0;i<a.length;i++){
+											e = '<p>' + a[i] + '</p>'
+											$('#container').append(e)
+										}
+									</script>
+								</section>
+
+						</div>
+					</div>
+
+{% include "partial/footer.html" %}

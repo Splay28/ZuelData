@@ -1,0 +1,226 @@
+<!DOCTYPE HTML>
+<!--
+	Editorial by HTML5 UP
+	html5up.net | @ajlkn
+	Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
+
+	以上为模板信息
+	作者 Splay28
+-->
+<html>
+	<head>
+		<title>{{usrname}}：用户空间</title>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+		<link rel="shortcut icon" href="{{ url_for('static', filename='favicon.png') }}">
+		<link rel="stylesheet" href={{ url_for("static",filename = "main/assets/css/main.css" ) }} />
+		<script src={{ url_for("static",filename = "main/assets/js/jquery.min.js" ) }}></script>
+		<script src={{ url_for("static",filename = "tinymce/js/tinymce/tinymce.min.js" ) }}></script>
+		<script src={{ url_for("static",filename = "tinymce/tinymce_setup.js" ) }}></script>
+		<script>
+			function get_content(type,data,count){
+				if(count == 0){return}
+				data = JSON.parse(data)
+				var box = document.getElementById(type+'s');
+				for(let i=0;i<count;i++){
+					let newel = document.createElement("div");
+					let title = document.createElement("h2");
+					let url = document.createElement("a");
+					let content = document.createElement("p");
+					let sign_pubdate = document.createElement("p");
+					sign_pubdate.style = "fontsize:14em;margin:0 0 0 0;color:#000000;"
+					let br = document.createElement("br");
+					let footnote = document.createElement("div");
+					url.href = '/blog/content?url=' + data[i]['id'];
+					title.innerHTML = data[i]['title'];
+					content.innerHTML = data[i]['abstract'];
+					sign_pubdate.innerHTML ='发布于：' +data[i]['pubdate'];
+
+					url.appendChild(title);
+					newel.appendChild(url);
+					footnote.appendChild(sign_pubdate);
+					newel.appendChild(footnote);
+					newel.appendChild(content);
+
+					if(type == 'blog'){
+						let div = document.createElement("div");
+						div.className = "row"
+						let img = document.createElement("img");
+						let url_img = document.createElement("a");
+						url_img.href = '/blog/content?url=' + data[i]['id'];
+						img.style="width: 100%;"
+						img.src = data[i]['cover'];
+						url_img.appendChild(img)
+
+						let keyword = data[i]['keyword'];
+						let key = document.createElement("p");
+						content.style = 'margin:0 0 0 0;'
+						key.innerHTML = '关键词：' + keyword;
+						newel.appendChild(key);
+						newel.className = "col-6 col-12-small"
+						url_img.className = "image col-6 col-12-small"
+
+						div.appendChild(newel)
+						
+						box.appendChild(div);
+						let h = div.offsetHeight
+						url_img.style="height:"+h+'px;'
+						div.appendChild(url_img)
+						div.style = "margin:0 0 2em 0;"
+
+					}
+					else{
+						newel.style = "margin:0 0 2em 0;"
+						box.appendChild(newel);
+					}
+				}
+			}
+
+			function write_content(){
+				var blogs='{{blogs|tojson}}';
+				var assessments='{{assessments|tojson}}';
+				assessments = JSON.parse(assessments);
+				var tasks='{{tasks|tojson}}';
+				tasks = JSON.parse(tasks);
+				var isroot='{{isroot}}';
+				if(isroot == 'root'){
+					let a=document.getElementById("change")
+					a.setAttribute('class','button primary fit')
+					a.innerHTML="修改用户信息"
+					a.href='{{url}}'
+				}
+
+				get_content('blog',blogs,'{{ccb}}');
+				
+				assessb = document.getElementById('assessb');
+				for(let i=0;i<assessments.length;i++){
+					let tr = document.createElement('tr');
+					let teacher = document.createElement('td');
+					teacher.innerHTML = assessments[i]['teacher'];
+					let score = document.createElement('td');
+					score.innerHTML = assessments[i]['score'];
+					let pubdate = document.createElement('td');
+					pubdate.innerHTML = assessments[i]['pubdate'];
+
+					let lessonname = document.createElement('td');
+					let a2 = document.createElement('a');
+					a2.innerHTML = assessments[i]['lesson'];
+					a2.href = '/lesson/content?url=' + assessments[i]['lesson_id'];
+					lessonname.appendChild(a2)
+
+					let a1 = document.createElement('a');
+					let abstract = document.createElement('td');
+					a1.innerHTML =assessments[i]['abstract'];
+					a1.href = '/assessment/content?url=' + assessments[i]['id'];
+					abstract.appendChild(a1)
+
+					tr.appendChild(lessonname)
+					tr.appendChild(teacher)
+					tr.appendChild(score)
+					tr.appendChild(abstract)
+					tr.appendChild(pubdate)
+					assessb.appendChild(tr)
+				}
+				document.getElementById('countassess').innerHTML = '共计：' + assessments.length + '条评价';
+
+				taskb = document.getElementById('taskb');
+				for(let i=0;i<tasks.length;i++){
+					let tr = document.createElement('tr');
+					let subdate = document.createElement('td');
+					subdate.innerHTML = tasks[i]['subdate'];
+					let title = document.createElement('td');
+					let a2 = document.createElement('a');
+					a2.href = '/task/content?url=' + tasks[i]['id'];
+					a2.innerHTML = tasks[i]['title'];
+					title.appendChild(a2)
+
+					let abstract = document.createElement('td');
+					abstract.innerHTML =tasks[i]['abstract'];
+					
+					tr.appendChild(title)
+					tr.appendChild(abstract)
+					tr.appendChild(subdate)
+					taskb.appendChild(tr)
+				}
+				document.getElementById('counttask').innerHTML = '共计：' + tasks.length + '项任务';
+			}
+		</script>
+	</head>
+	<body class="is-preload" onload="write_content()">
+		
+		<!-- Wrapper -->
+		<div id="wrapper">
+
+			<!-- Main -->
+				<div id="main">
+					<div class="inner">
+
+						<!-- Header -->
+							<header id="header">
+								<a href="/index" class="logo"><strong>中南数据</strong></a>
+							</header>
+
+							<!-- Content -->
+								<section>
+									<header class="main">
+										<h1 style="margin:0;">{{usrname}}</h1>
+										<p>{{sig}}</p>
+										<hr/>
+									</header>
+
+									<!-- Content -->
+										<h2>TA的待办</h2>
+										<div id="tasks">
+											<table>
+												<thead>
+													<tr>
+														<th>标题</th>
+														<th>摘要</th>
+														<th>截止日期</th>
+													</tr>
+												</thead>
+												<tbody id="taskb">
+												</tbody>
+												<tfoot>
+													<tr>
+														<td colspan="1"></td>
+														<td id="counttask"></td>
+													</tr>
+												</tfoot>
+											</table>
+										</div>
+										<hr/>
+										<h2>TA的博客</h2>
+										<div id="blogs">
+										</div>
+										<hr/>
+										<h2>TA的课程&评价</h2>
+										<div id="assessments">
+											<table>
+												<thead>
+													<tr>
+														<th>课程名</th>
+														<th>授课老师</th>
+														<th>评分</th>
+														<th>主要内容</th>
+														<th>发布时间</th>
+													</tr>
+												</thead>
+												<tbody id="assessb">
+												</tbody>
+												<tfoot>
+													<tr>
+														<td colspan="3"></td>
+														<td id="countassess"></td>
+													</tr>
+												</tfoot>
+											</table>
+										</div>
+										<hr/>
+										<a id="change"></a>
+								</section>
+
+						</div>
+					</div>
+
+{% include "partial/footer.html" %}

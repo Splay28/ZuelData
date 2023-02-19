@@ -1,0 +1,138 @@
+<!DOCTYPE HTML>
+<!--
+	Editorial by HTML5 UP
+	html5up.net | @ajlkn
+	Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
+
+	以上为模板信息
+	作者 Splay28
+-->
+<html>
+	<head>
+		<title>中南数据-首页</title>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+		<link rel="shortcut icon" href="{{ url_for('static', filename='favicon.png') }}">
+		<link rel="stylesheet" href={{ url_for("static",filename = "main/assets/css/main.css" ) }} />
+		<script src={{ url_for("static",filename = "main/assets/js/jquery.min.js" ) }}></script>
+		<script>
+			function write_content(){
+				var posters = '{{posters|tojson}}';
+				var level = '{{userlevel}}';
+				posters = JSON.parse(posters);
+				if(level == 'admin' || level == 'root'){document.getElementById('create_button_notice').style=""}
+				if(level == 'admin' || level == 'root' || level == 'volunteer'){document.getElementById('create_button_netdisk').style=""}
+				if(level == 'root'){document.getElementById('create_button_back').style=""}
+				if(level == 'norm' || level == 'block'){$('#create_button_file').hide()}
+				
+				for(let i=0;i<posters.length;i++){
+					let a0='<a href="' + posters[i]['lesson_url'] + '" class="image" style="height: 12em;"><img style="max-width:100%;" src="/api/random_pic?url=' + i + '" alt="" /></a>';
+					let h3=$("<h3></h3>").text(posters[i]['lesson_name']);
+					let p=$("<p></p>").text('【总评分' + posters[i]['score'] + '】，“' + posters[i]['lesson_comment'] + '”');
+					let ul='<ul class="actions"><li><a href="' + posters[i]['lesson_url'] + '" class="button">了解更多</a></li></ul>';
+					let art=$("<article></article>");
+					art.append(a0,h3,p,ul);
+					$('#posts_page').append(art);
+				}
+				
+			}
+		</script>
+	</head>
+	<body class="is-preload" onload="write_content()">
+		
+		<!-- Wrapper -->
+		<div id="wrapper">
+
+			<!-- Main -->
+				<div id="main">
+					<div class="inner">
+
+						<!-- Header -->
+							<header id="header">
+								<a href="/index" class="logo"><strong>中南数据</strong></a>
+							</header>
+
+							<!-- Banner -->
+								<section id="banner" class="row">
+									<div class="content col-6 col-12-xsmall">
+										<header>
+											<h1>欢迎回来,<a href={{userspace}}>{{username}}</a>!</h1>
+											<p>今天是{{daynow}}</p>
+										</header>
+										<blockquote>{{quota}}  ——{{quota_author}}</blockquote>
+										<p>使用左上角搜索框以开始检索课程号、标签、案例、文件或经验贴</p>
+										<ul class="actions">
+											<li>
+												<a href="/blog/publish" id="create_button_blog" class="button big">发布博客</a>
+												<a href="/task/publish" id="create_button_file" class="button big">创建任务</a>
+												<a href="/notice/publish" id="create_button_notice" style="display:none;" class="button big">发布公告</a>
+												<a href="/netdisk" id="create_button_netdisk" style="display:none;" class="button big">网盘</a>
+												<a href="/backstage" id="create_button_back" style="display:none;" class="button big">后台管理</a>
+											</li>
+										</ul>
+									</div>
+									<div class="horoscope col-6 col-12-xsmall">
+											<h1>★{{is_good}}★</h1>
+											<div>
+												<div class="row">
+													<article class="col-6 col-12-xsmall">
+														<h2>宜：{{horo1}}</h2>
+														<p>{{abs1}}</p>
+													</article>
+													<article class="col-6 col-12-xsmall">
+														<h2>忌：{{horo3}}</h2>
+														<p>{{abs3}}</p>
+													</article>
+												</div>
+												<div class="row">
+													<article class="col-6 col-12-xsmall">
+														<h2>宜：{{horo2}}</h2>
+														<p>{{abs2}}</p>
+													</article>
+													<article class="col-6 col-12-xsmall">
+														<h2>忌：{{horo4}}</h2>
+														<p>{{abs4}}</p>
+													</article>
+												</div>
+											</div>
+									</div>
+								</section>
+
+							<!-- Section -->
+								<section>
+									<header class="major">
+										<h2>最新公告</h2>
+									</header>
+									<div class="features">
+										<article>
+											<span class="icon fa-gem"></span>
+											<div class="content">
+												<a href="/notice/content?url={{notice[0][3]}}"><h3>{{notice[0][0]}}</h3></a>
+												<p>{{notice[0][1]}}</p>
+												<p>{{notice[0][2]}}</p>
+											</div>
+										</article>
+										<article>
+											<span class="icon solid fa-paper-plane"></span>
+											<div class="content">
+												<a href="/notice/content?url={{notice[1][3]}}"><h3>{{notice[1][0]}}</h3></a>
+												<p>{{notice[1][1]}}</p>
+												<p>{{notice[1][2]}}</p>
+											</div>
+										</article>
+									</div>
+								</section>
+
+							<!-- Section -->
+								<section>
+									<header class="major">
+										<h2>热门课程</h2>
+									</header>
+									<div id="posts_page" class="posts">
+									</div>
+								</section>
+
+						</div>
+					</div>
+
+{% include "partial/footer.html" %}

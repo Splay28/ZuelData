@@ -1,0 +1,187 @@
+<!DOCTYPE HTML>
+<!--
+	Editorial by HTML5 UP
+	html5up.net | @ajlkn
+	Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
+
+	以上为模板信息
+	作者 Splay28
+-->
+<html>
+	<head>
+		<title>中南数据_网盘</title>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+		<link rel="shortcut icon" href="{{ url_for('static', filename='favicon.png') }}">
+		<link rel="stylesheet" href={{ url_for("static",filename = "main/assets/css/main.css" ) }} />
+		<script src={{ url_for("static",filename = "main/assets/js/jquery.min.js" ) }}></script>
+		<script type="text/javascript" src={{ url_for("static",filename = "DataTables/datatables.js" ) }}></script>
+
+		<script>
+			
+			function getcontent(){
+				data = '{{data|tojson}}'
+				type = '{{type}}'
+				query = '{{query}}'
+				var urllist = []
+				
+
+				if(data == -1){
+					document.getElementById("clear").remove();
+					return;
+				}
+				data=JSON.parse(data);
+
+				$('#query').hide()
+				$('#urllist').hide()
+
+				if(query != "None"){
+					$('#filetablehead').html('<tr><th>文件名</th><th>命中次数</th><th>文件类型</th><th>命中内容</th><th>发布时间</th></tr>')
+				}
+				else{$('#submit').hide()}
+
+
+				let filetablebody = document.getElementById("filetablebody")
+				for(let i=0;i<data.length;i++){
+					// File.id,File.title,User.nickname,File.keyword,File.abstract,File.pubdate
+					let tr = document.createElement('tr')
+					let title = document.createElement('td')
+					let author = document.createElement('td')
+					let keyword = document.createElement('td')
+					let abstract = document.createElement('td')
+					let pubdate = document.createElement('td')
+					let a = document.createElement('a')
+					a.innerHTML = data[i][1]
+					a.href = '/api/file/download?url=' + data[i][0]
+					urllist.push(data[i][0])
+					if(!data[i][2])data[i][2] = '已註銷'
+					author.innerHTML = data[i][2]
+					keyword.innerHTML = data[i][3]
+					abstract.innerHTML = data[i][4]
+					pubdate.innerHTML = data[i][5]
+					title.appendChild(a)
+
+					tr.appendChild(title)
+					tr.appendChild(author)
+					tr.appendChild(keyword)
+					tr.appendChild(abstract)
+					tr.appendChild(pubdate)
+
+					filetablebody.appendChild(tr)
+				}
+					
+					
+				if(!data.length){
+					document.getElementById("countfile").innerHTML = "共：" + 0 + "个文件。";
+					$('#download').hide()
+				}
+				else{
+					document.getElementById("countfile").innerHTML = "共：" + data.length + "个文件。";
+					$('#urllist').attr('value',JSON.stringify(urllist))
+				}
+				$('#filetable').DataTable({
+					info: false,
+					language: {
+						lengthMenu: '每一页显示 _MENU_ 个文件',
+						zeroRecords: '0条数据',
+						search: "在以下列表中搜索：",
+						paginate: {
+							first:      "第一页",
+							previous:   "上一页",
+							next:       "下一页",
+							last:       "最后一页"
+						}
+					},
+				});
+				
+				$('#download_a').click(function(){
+					var usr_id = {
+						data: JSON.stringify({
+						'query': '{{query}}',
+						'urllist': urllist
+						}),
+					}
+					$.ajax({
+						url: '/api/download/list',
+						type: 'POST',
+						dataType: 'json',
+						data: usr_id,
+						success: function (data) {
+
+							console.log(data)
+
+						},
+						error: function (data) {}
+					});
+
+				})
+
+				
+			}
+		</script>
+	</head>
+	<body class="is-preload" onload="getcontent()">
+		
+		<!-- Wrapper -->
+		<div id="wrapper">
+
+			<!-- Main -->
+				<div id="main">
+					<div class="inner">
+
+						<!-- Header -->
+							<header id="header">
+								<a href="/index" class="logo"><strong>中南数据</strong></a>
+							</header>
+
+							<!-- Content -->
+								<section>
+									<header class="main">
+										<h1>中南数据</h1>
+											<form method="get" action="/netdisk" style="margin: 0 0 0 0;">
+												<input type="text" style="float:left;width:80%" name="query" value="" placeholder="全文检索" maxlength="30">
+												<input type="text" name="type" value="{{type}}" style='display: none;'/>
+												<input type="submit" style="width:15%;text-align:center" value="搜索" class="primary fit">
+											</form>
+									</header>
+									<hr/>
+									<!-- Content -->
+									<div id="clear_1">
+										<div id="filediv">
+											<h2>文件列表</h2>
+											<table id="filetable" class="alt">
+												<thead id="filetablehead">
+													<tr>
+														<th>文件名</th>
+														<th>上传者</th>
+														<th>关键词</th>
+														<th>描述</th>
+														<th>发布时间</th>
+													</tr>
+												</thead>
+												<tbody id="filetablebody">
+												</tbody>
+												<tfoot>
+													<tr>
+														<td colspan="2"></td>
+														<td id="countfile"></td>
+														<td id="download">
+															<form action="/api/download/list" method="post">
+																<input id="query" name="query" value="{{query}}">
+																<input id="urllist" name="urllist" value="{{urllist}}">
+																<input id="submit" type="submit" value="打包下载文件">
+															</form>
+														</td>
+													</tr>
+												</tfoot>
+											</table>
+										</div>
+										<hr/>
+									</div>
+									<a class="button primary" href="/netdisk/upload">点我上传文件</a>
+								</section>
+
+						</div>
+					</div>
+
+{% include "partial/footer.html" %}

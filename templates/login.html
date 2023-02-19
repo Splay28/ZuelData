@@ -1,0 +1,189 @@
+<!DOCTYPE HTML>
+<!--
+	Dimension by HTML5 UP
+	html5up.net | @ajlkn
+	Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
+-->
+<html>
+	<head>
+		<title>中南数据</title>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+		<link rel="shortcut icon" href="{{ url_for('static', filename='favicon.png') }}">
+		<link rel="stylesheet" href='{{ url_for("static",filename = "login/css/main.css" ) }}' />
+		<script src='{{ url_for("static",filename = "login/js/jquery.min.js") }}'></script>
+		<script src='{{ url_for("static",filename = "login/js/md5.min.js") }}'></script>
+		<script>
+			function get_v_code() {
+				var usr_id = {'id': 'anonymous'}
+				$.ajax({
+				url: '/api/v_code',
+				type: 'POST',
+				dataType: 'json',
+				data: usr_id,
+				success: function (data) {
+			
+					$('#v_pic').attr('src', data)
+					$('#v_pic_r').attr('src', data)
+			
+				},
+				error: function (data) {
+			
+					$('#v_pic').attr('src', data)
+					$('#v_pic_r').attr('src', data)
+			
+				}
+				});
+			
+			}
+		</script>
+		<noscript><link rel="stylesheet" href='{{ url_for("static",filename = "login/css/noscript.css" ) }}' /></noscript>
+	</head>
+	<body class="is-preload" onload="get_v_code()">
+
+		<!-- Wrapper -->
+			<div id="wrapper">
+
+				<!-- Header -->
+					<header id="header">
+						<div class="logo">
+							<span class="icon fa-gem"></span>
+						</div>
+						<div class="content">
+							<div class="inner">
+								<h1>中南数据</h1>
+								<p style="margin: 0 0 0 0;">我们已在，舞台之上</p>
+								<p>私たちはもう、舞台の上</p>
+							</div>
+						</div>
+						<nav>
+							<ul>
+								<li><a href="#login">登录</a></li>
+								<li><a href="#regester">注册</a></li>
+								<li><a href="#guest">游客</a></li>
+							</ul>
+						</nav>
+					</header>
+
+				<!-- Main -->
+					<div id="main">
+
+						<!-- Login -->
+							<article id="login">
+								<h2 class="major">登录</h2>
+								<span class="image main"><img src="/api/random_pic?url=3" alt="" /></span>
+								<form method="post" action="#">
+									<div class="fields">
+										<div class="field half">
+											<label for="username">邮箱</label>
+                    						<input type="text" name="username" id="username" required="required"/>
+											<label for="v_in">验证码（不区分大小写）</label>
+                    						<input type="text" name="v_in" id="v_in" required="required"/>
+											<img src="" onclick="get_v_code()" id="v_pic">
+										</div>
+										<div class="field half" id="login_field">
+											<label for="password">密码</label>
+                      						<input type="password" name="password" id="password" required="required"/>
+											<input type="checkbox" id="remember" name="remember">
+											<label for="remember">7天内记住登录状态</label>
+										</div>
+									</div>
+									<ul class="actions">
+										<li><button type="button" class="primary" id="ajax_login_submit"/>登录</li>
+										<li><button type="button" id="fgt_pwd"/>忘记密码</li>
+										<li><p id='login_emsg'></p></li>
+									</ul>
+								</form>
+							</article>
+						
+						<!-- Regester -->
+						<article id="regester">
+							<h2 class="major">注册</h2>
+							<span class="image main"><img src="/api/random_pic?url=2" alt="" /></span>
+							<form method="post" action="#" enctype="multipart/form-data">
+								<div class="fields">
+									<div class="field half">
+										<label for="v_in_r">验证码（不区分大小写）</label>
+										<input type="text" name="v_in_r" id="v_in_r" required="required"/>
+										<img src="" onclick="get_v_code()" id="v_pic_r">
+										<label for="nick">昵称</label>
+										<input type="text" name="nick" id="nick_r" maxlength="28" required="required"/>
+									</div>
+									<div class="field half">
+										<label for="realname">真实姓名</label>
+										<input type="text" name="realname" id="realname_r" maxlength="28" required="required"/>
+										<label for="num">学号</label>
+										<input type="text" name="num" id="num_r" maxlength="12" required="required"/>
+										<label for="email">邮箱（请认真填写，一经注册不能修改）</label>
+										<input type="email" name="email" id="email_r" maxlength="28" required="required"/>
+									</div>
+									<div class="field" id="rege_field">
+										<label for="password">密码</label>
+										<input type="password" name="password" id="password_r" required="required"/>
+										<label for="password_c">确认密码</label>
+										<input type="password" oninput="OnInput_p(event)" id="password_c" name="password_c" required="required">
+										<label for="code">邀请码</label>
+										<input type="text" name="code" id="code" required="required"/>
+									</div>
+								</div>
+								<ul class="actions">
+									<li><button type="button" class="primary" id="ajax_rege_submit" />注册</li>
+									<li><p id='rege_emsg'></p></li>
+								</ul>
+							</form>
+							<p>出于政策性原因及相关考虑，经商议决定，本系统仅供本校人员使用，采用邀请注册</p>
+							<p style=text-align:right>Dec/30/2022</p>
+						</article>
+
+						<!-- Guest -->
+							<article id="guest">
+								<h2 class="major">有关游客用户</h2>
+								<span class="image main"><img src="/api/random_pic?url=1" alt="" /></span>
+								<p>出于政策性原因及相关考虑，经商议决定，本系统仅供内部人员使用，关闭游客访问入口，开放时间另作通知</p>
+								<p style=text-align:right>Aug/07/2022</p>
+							</article>
+
+					</div>
+
+				<!-- Footer -->
+					<footer id="footer">
+						<p class="copyright">&copy; Powered by <a href="https://github.com/Splay28">Splay28</a>. All rights reserved by 中南法援</p>
+						<p class="copyright">Design: <a href="https://html5up.net">HTML5 UP</a>,使用时有修改.背景图片来自<a href="https://www.pixiv.net/artworks/99134825">てぃつ丸</a></p>
+						<p class="copyright">网页许可协议：<a href="https://html5up.net/license">Creative Commons</a> license.</p>
+						<p class="copyright"><a id="contact" href="#">联系管理员</a></p>
+						<p class="copyright"><a href="https://beian.miit.gov.cn/">鄂ICP备2023001080号</a></p>
+					</footer>
+
+			</div>
+
+		<!-- BG -->
+			<div id="bg"></div>
+
+		<!-- Scripts -->
+			<script src='{{ url_for("static",filename = "login/js/browser.min.js") }}'></script>
+			<script src='{{ url_for("static",filename = "login/js/breakpoints.min.js") }}'></script>
+			<script src='{{ url_for("static",filename = "login/js/util.js") }}'></script>
+			<script src='{{ url_for("static",filename = "login/js/main.js") }}'></script>
+			<script>
+				function OnInput_p (event) {
+					let v = event.target.value;
+					let id = event.target.id;
+					if(v != $('#password_r').val())$('#rege_emsg').html('两次输入密码不符');
+					else $('#rege_emsg').html('');
+				}
+
+				con = '{{contact|tojson}}'
+				con = JSON.parse(con)
+				$('#contact').click(function () { 
+					l = '若要联系管理员，请按以下先后顺序联系：\n';
+					for(let i=con.length - 1;i>=0;i--){
+						l = l + con[i];
+						l = l + '\n';
+					}
+					l = l + '请耐心等待回复'
+					alert(l)
+				})
+			</script>
+
+	</body>
+</html>
