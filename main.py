@@ -334,11 +334,15 @@ def user_setting():
     id = request.form.get("usr")
     if(current_user.authority != 'root' and current_user.authority != 'admin' and current_user.id != id):return render_template('alert.html', msg = "权限不足!")
     nick = request.form.get("nick")
+    nick.replace('\n','。')
+    nick.replace('\r','')
     name = request.form.get("name")
     email = request.form.get("email")
     num = request.form.get("num")
     authority = request.form.get("level")
     sig = request.form.get("sig")
+    sig.replace('\n','。')
+    sig.replace('\r','')
 
     #id, address, nickname, pwd, authority, name, num, signature
     if(current_user.authority == 'root'):
@@ -433,6 +437,8 @@ def upload_assessment():
     if(lesson_id in assessed):return render_template('alert.html', msg="你已经评价过该课程！")
 
     abstract = request.form.get("abstract")
+    abstract.replace('\n','。')
+    abstract.replace('\r','')
     content = request.form.get("content")
     if(not abstract):
         abstract=''
@@ -500,6 +506,8 @@ def upload_blog():
     if(not(cover and title and abstract and keyword and content)):return render_template('alert_p.html', title = "内容空缺! ", msg = "*注：错误的验证码会导致提交失败，直接后退回到本页面时，请重新上传图片内容（即使图片在编辑框中正常显示），否则图片会丢失")
     files_input = ''
     coverid = 0
+    abstract.replace('\n','。')
+    abstract.replace('\r','')
     if(cover):
         if(cover[0].filename):
             coverid = str(uuid.uuid1()) + cover[0].filename[(cover[0].filename.rfind('.')):]
@@ -671,6 +679,8 @@ def notice_publish():
     content = request.form.get("content")
     if(not(title and sign and content)):return render_template('alert.html', msg = "内容空缺!")
     files_input = ''
+    content.replace('\n','。')
+    content.replace('\r','')
     if(data[0].filename):
         for i in data:
             id = str(uuid.uuid1())
@@ -768,6 +778,8 @@ def task_publish_api():
     api_type = request.args.get('type')
     self_id = request.args.get('url')
     abstract = request.form.get("abstract")
+    abstract.replace('\n','。')
+    abstract.replace('\r','')
     title = request.form.get("title")
     email = request.form.get("email")
     if(not (title and abstract and email)):return render_template('alert.html', msg = "信息有误!")
@@ -1182,6 +1194,8 @@ def upload_file():
 
     data = request.files.getlist("file")
     abstract = request.form.get("abstract")
+    abstract.replace('\n','。')
+    abstract.replace('\r','')
     keyword = request.form.get("keyword")
 
     if(not(abstract and keyword)):return render_template('alert.html', msg = "内容空缺!")

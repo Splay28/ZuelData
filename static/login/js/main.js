@@ -365,6 +365,13 @@
 					$('#rege_emsg').html('有未填写项目');
 					return;
 				}
+
+				let checkEmail = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+				if (!checkEmail.test(email)) {
+					$('#rege_emsg').html('邮箱格式不正确');
+					return;
+				}
+
 				var data = {
 					data: JSON.stringify({
 					'v_in_r': v_code,
