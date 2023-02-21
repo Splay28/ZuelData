@@ -232,6 +232,8 @@ def change_pwd_request():
     data = json.loads(request.form.get('data'))
     e = data['email']
     u = datasys.User.get_from_email(e)
+    print(pwd_change_rege)
+    print('request')
     if(pwd_today[0] != datetime.datetime.today()):
         pwd_today[0] = datetime.datetime.today()
         pwd_change_today.clear()
@@ -249,6 +251,8 @@ def change_pwd_request():
 def change_pwd_page():
     auth = request.args.get('url')
     u = datasys.User.get_from_pwd_code(auth)
+    print(pwd_change_rege)
+    print('page')
     if(u.id not in pwd_change_rege):
         return render_template('alert.html', msg='操作非法')
     return render_template('change_pwd.html', auth=auth, contact=datasys.User.get_contact())
@@ -298,6 +302,8 @@ def check_level():
 def change_pwd():
     data = json.loads(request.form.get('data'))
     auth = data['auth']
+    print(pwd_change_rege)
+    print('api')
     u = datasys.User.get_from_pwd_code(auth)
     if(u.id not in pwd_change_rege):
         return jsonify("操作非法")
@@ -305,6 +311,7 @@ def change_pwd():
     pwd = hash.md5((pwd + pwd_salt).encode()).hexdigest()
     datasys.User.update_user(id=u.id,pwd=pwd)
     pwd_change_rege.remove(u.id)
+    print('removed')
     pwd_change_today.append(u.id)
     email(u.email, '中南数据_修改密码', '你在中南数据的密码已修改\n希望上述行为是你本人的操作，如果是，请勿理会此邮件\n如果不是你本人操作，你的账号可能已经被盗，请迅速与系统管理员联系', [], '', 0,free_u=1)
     return jsonify("修改密码成功")
