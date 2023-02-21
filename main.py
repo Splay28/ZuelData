@@ -767,8 +767,8 @@ def task_reply():
         id_allow.append(i[0])
     if(current_user.id not in id_allow):return render_template('alert.html', msg='办理人员错误')
 
-    data={'from':from_to['to'],
-        'to':from_to['from'],
+    data={'from':from_to['from'],
+        'to':from_to['to'],
         'quota':datasys.Task.get_for_quota(url, need_self=1),
         'task':task
         }
