@@ -86,7 +86,7 @@
 				for(let i=0;i<data['to'].length;i++){
 					let to0=document.createElement("a");
 					to0.href='/user/base?url='+data['to'][i][0];
-					to_ids+=(data['to'][0][0]+',')
+					to_ids+=(data['to'][i][0]+',')
 					to0.innerHTML=data['to'][i][1];
 					to0.style="margin: 0px 1em 0px 0px;"
 					$('#lawsuit_box').append(to0);
