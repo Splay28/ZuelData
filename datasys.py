@@ -496,6 +496,8 @@ class Task(Base):
     def new_task(task):
         task.title=len_check(task.title, 100)
         task.abstract=len_check(task.abstract, 500)
+        task.abstract = task.abstract.replace('\n','。')
+        task.abstract = task.abstract.replace('\r','')
         task.status=len_check(task.status, 50)
 
         if(task.from_id[-1:] == ','):task.from_id = task.from_id[:-1]
@@ -523,7 +525,11 @@ class Task(Base):
 
     @staticmethod
     def get_task(id):
-        return session.query(Task).filter(Task.id == id).first()
+        task = session.query(Task).filter(Task.id == id).first()
+        task.abstract = task.abstract.replace('\n','。')
+        task.abstract = task.abstract.replace('\r','')
+        
+        return task
 
     @staticmethod
     def get_user_task(id):
