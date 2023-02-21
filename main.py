@@ -49,7 +49,7 @@ todo
 16. 关于 √
 '''
 
-
+#用redis解决全局变量问题
 app = Flask(__name__)  # 创建 Flask 应用
 
 app.secret_key = 'moeka'  # 设置表单交互密钥
@@ -59,14 +59,17 @@ login_manager = LoginManager()  # 实例化登录管理对象
 login_manager.init_app(app)  # 初始化应用
 login_manager.session_protection = 'strong'
 login_manager.login_view = 'login'  # 设置用户登录视图函数 endpoint
+
+from globalv import *
+'''
 pwd_change_today= []
 pwd_change_rege = []
-pwd_today = [datetime.datetime.today()]
 pwd_salt = 'koizumimoekadaisuki'
 verification_codes = {'user':'code'}
 #检查每小时清空一次
 tempfile_list = [datetime.datetime.today()]
 verification_codes_random = [datetime.datetime.now().hour]
+'''
 
 match_id = r'"/user/base\?url=(.*?)"'
 match_name = r'>(.*?)</a>'
@@ -113,9 +116,8 @@ def logoinform():
     emsg = None
 
     v = data['v'].upper()
-    if(v not in verification_codes_random):
+    if(exam(v, verification_codes_random)):
         return jsonify('验证码不正确')
-    verification_codes_random.remove(v)
 
     user_name = data['username']
     password = data['password']
@@ -142,9 +144,8 @@ def logoinform():
 def regester():
     data = json.loads(request.form.get('data'))
     v = data['v_in_r'].upper()
-    if(v not in verification_codes_random):
+    if(exam(v, verification_codes_random)):
         return jsonify('验证码不正确')
-    verification_codes_random.remove(v)
     code = data['code']
     code = datasys.User.get_from_code(code, get_id=1)
     if(not code):return jsonify('邀请码不正确')
@@ -232,18 +233,13 @@ def change_pwd_request():
     data = json.loads(request.form.get('data'))
     e = data['email']
     u = datasys.User.get_from_email(e)
-    print(pwd_change_rege)
-    print('request')
-    if(pwd_today[0] != datetime.datetime.today()):
-        pwd_today[0] = datetime.datetime.today()
-        pwd_change_today.clear()
-        pwd_change_rege.clear()
-    if(id not in pwd_change_today):
+
+    if(not exam(u.id,pwd_change_today)):
         url = 'https://www.zhongnandata.top/user/change_pwd?url=' + u.generate_pwd_code()
         url = '你正在尝试修改你在中南数据账号的密码，如果你没有进行上述操作，你的账号可能已经处于风险，请加强密码强度\n请点击以下链接修改密码：\n' + url
         email(u.email, '中南数据_修改密码', url, [], '', 0,free_u=1)
-        pwd_change_rege.append(u.id)
-    if(id in pwd_change_today):
+        push(u.id, pwd_change_rege)
+    else:
         return jsonify('一天内只能修改一次密码')
     return jsonify('发送邮件成功')
 
@@ -251,9 +247,8 @@ def change_pwd_request():
 def change_pwd_page():
     auth = request.args.get('url')
     u = datasys.User.get_from_pwd_code(auth)
-    print(pwd_change_rege)
-    print('page')
-    if(u.id not in pwd_change_rege):
+
+    if(not exam(u.id, pwd_change_rege)):
         return render_template('alert.html', msg='操作非法')
     return render_template('change_pwd.html', auth=auth, contact=datasys.User.get_contact())
 
@@ -302,17 +297,15 @@ def check_level():
 def change_pwd():
     data = json.loads(request.form.get('data'))
     auth = data['auth']
-    print(pwd_change_rege)
-    print('api')
+
     u = datasys.User.get_from_pwd_code(auth)
-    if(u.id not in pwd_change_rege):
+    if(not exam(u.id, pwd_change_rege)):
         return jsonify("操作非法")
     pwd = data['pwd']
     pwd = hash.md5((pwd + pwd_salt).encode()).hexdigest()
     datasys.User.update_user(id=u.id,pwd=pwd)
-    pwd_change_rege.remove(u.id)
-    print('removed')
-    pwd_change_today.append(u.id)
+
+    push(u.id, pwd_change_today)
     email(u.email, '中南数据_修改密码', '你在中南数据的密码已修改\n希望上述行为是你本人的操作，如果是，请勿理会此邮件\n如果不是你本人操作，你的账号可能已经被盗，请迅速与系统管理员联系', [], '', 0,free_u=1)
     return jsonify("修改密码成功")
 
@@ -478,14 +471,12 @@ def assessment_content():
 def generate_v_code():
     t = getcode()
     id = request.form.get('id')
-    if(verification_codes_random[0] != datetime.datetime.now().hour):
-        verification_codes_random.clear()
-        verification_codes_random.append(datetime.datetime.now().hour)
+    check(verification_codes_random, 'hour')
     
     if((id == 'anonymous') or (not current_user.is_authenticated)):
-        verification_codes_random.append(t[1].upper())
+        push(t[1].upper(), verification_codes_random, 'hour')
     else:
-        verification_codes[current_user.id]=t[1].upper()
+        verification_code_set(current_user.id, t[1].upper())
 
     return jsonify('data:image/png;base64,'+t[0])
 
@@ -500,9 +491,9 @@ def uploadblog_page():
 def upload_blog():
     v = request.form.get("v_in").upper()
 
-    if((current_user.id not in verification_codes) or(verification_codes[current_user.id] != v)):
+    if((verification_code_get(current_user.id) != v)):
         return render_template('alert_p.html', title='验证码不正确', msg = "*注：错误的验证码会导致提交失败，直接后退回到本页面时，请重新上传图片内容（即使图片在编辑框中正常显示），否则图片会丢失")
-    verification_codes.pop(current_user.id)
+    verification_code_set(current_user.id, 0)
 
     data = request.files.getlist("file")
     cover = request.files.getlist("cover")
@@ -767,8 +758,8 @@ def task_reply():
         id_allow.append(i[0])
     if(current_user.id not in id_allow):return render_template('alert.html', msg='办理人员错误')
 
-    data={'from':from_to['from'],
-        'to':from_to['to'],
+    data={'from':from_to['to'],
+        'to':from_to['from'],
         'quota':datasys.Task.get_for_quota(url, need_self=1),
         'task':task
         }
@@ -846,7 +837,7 @@ def task_publish_api():
         if(api_type == 'reply'):
             t=datasys.Task.get_task(self_id)
             #from_id, to_id, abstract, file, pubdate, subdate
-            a=t.reply(from_id=to_id, to_id=from_id, abstract=abstract, file=files_input[:-1], pubdate=pubdate.strftime("%Y-%m-%d %H:%M:%S"), subdate=(pubdate+datetime.timedelta(days=3)).strftime("%Y-%m-%d %H:%M:%S"))
+            a=t.reply(from_id=from_id, to_id=to_id, abstract=abstract, file=files_input[:-1], pubdate=pubdate.strftime("%Y-%m-%d %H:%M:%S"), subdate=(pubdate+datetime.timedelta(days=3)).strftime("%Y-%m-%d %H:%M:%S"))
             if(a==-1):return render_template('alert.html', msg = "回复失败!")
             else:return render_template('alert.html', msg = "回复成功!")
         else:
@@ -903,17 +894,16 @@ def downloadlist():
     idlist = json.loads(request.form.get('urllist'))
     query = request.form.get('query')
     
-    if(tempfile_list[0] != datetime.datetime.today()):
-        file_to_del = tempfile_list[1:]
+    if(indexlist(0, tempfile_list) != datetime.datetime.today()):
+        file_to_del = getlist(tempfile_list)[1:]
         for i in file_to_del:
             os.remove(i)
-        tempfile_list.clear()
-        tempfile_list.append(datetime.datetime.today())
+        check(tempfile_list)
 
     file = datasys.File.get_zip(idlist)
     
     if(not file):return render_template('alert.html', msg='文件不存在！')
-    tempfile_list.append(file)
+    push(file, tempfile_list)
 
     return send_file(file, as_attachment=True, download_name=f'_{query}_的搜索结果.zip', mimetype='application/zip')
 
@@ -1192,9 +1182,9 @@ def clear_redundancy():
 def upload_file():
     v = request.form.get("v_in").upper()
 
-    if((current_user.id not in verification_codes) or (verification_codes[current_user.id] != v)):
+    if(verification_code_get(current_user.id) != v):
         return render_template('alert_p.html', title='验证码不正确', msg = "*注：错误的验证码会导致提交失败，直接后退回到本页面时，请重新上传文件")
-    verification_codes.pop(current_user.id)
+    verification_code_set(current_user.id)
 
     if((current_user.authority != 'root') and (current_user.authority != 'admin') and (current_user.authority != 'volunteer')):
         return render_template('alert.html', msg='权限不足')
