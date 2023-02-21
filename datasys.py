@@ -516,7 +516,7 @@ class Task(Base):
                     if(t0):receiver.append(t0[0])
                     else:return -1
             for i in receiver:
-                util.email(i, '【办结】'+self.title, abstract, 0,'https://zhongnandata.top/task/content?url=' + self.id, 0)
+                util.email(i, '【办结】'+self.title, abstract, 0,'https://www.zhongnandata.top/task/content?url=' + self.id, 0)
         session.query(Task).filter(Task.id == self.id).update({Task.status:'done', Task.subdate:datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")})
         session.commit()
         session.close()
@@ -556,7 +556,7 @@ class Task(Base):
         session.close()
 
         for i in receiver:
-            util.email(i, task.title, task.abstract, file,'http://zhongnandata.top/task/content?url=' + task.id, str(task.subdate))
+            util.email(i, task.title, task.abstract, file,'https://www.zhongnandata.top/task/content?url=' + task.id, str(task.subdate))
 
     @staticmethod
     def get_task(id):

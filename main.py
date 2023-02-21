@@ -19,11 +19,6 @@ import os
 
 from flask.json import JSONEncoder
 
-from tornado.wsgi import WSGIContainer
-from tornado.httpserver import HTTPServer
-from tornado.ioloop import IOLoop
-
-
 class CustomJSONEncoder(JSONEncoder):
   "Add support for serializing timedeltas"
 
@@ -41,7 +36,7 @@ todo
 4. 验证码 √
 5. 密码哈希 
 7. 批量操作数据 √
-    检查课表更新能力 √
+    检查课表更新能力√
 8. 检查用户数据更新 ×
 9. 连接查询去除重复列 √
 10. 法援数据聚合检索 √
@@ -242,7 +237,7 @@ def change_pwd_request():
         pwd_change_today.clear()
         pwd_change_rege.clear()
     if(id not in pwd_change_today):
-        url = 'zhongnandata.top/user/change_pwd?url=' + u.generate_pwd_code()
+        url = 'https://www.zhongnandata.top/user/change_pwd?url=' + u.generate_pwd_code()
         url = '你正在尝试修改你在中南数据账号的密码，如果你没有进行上述操作，你的账号可能已经处于风险，请加强密码强度\n请点击以下链接修改密码：\n' + url
         email(u.email, '中南数据_修改密码', url, [], '', 0,free_u=1)
         pwd_change_rege.append(u.id)
@@ -865,7 +860,7 @@ def arrange_change_page():
 def downloadfile():
     id = request.args.get("url")
 
-    templates = ['general.pdf', 'lessontable.xls', 'arrange.xls', 'horo.xls', 'quota.xls']
+    templates = ['general.pdf', 'lessontable.xls', 'arrange.xls', 'horo.xls', 'quota.xls', 'lawsuit.xls']
     if(id in templates):
         if((current_user.authority != 'root') and (current_user.authority != 'admin') and (current_user.authority != 'volunteer')):
             return render_template('alert.html', msg='权限不足')
