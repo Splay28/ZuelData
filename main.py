@@ -18,6 +18,7 @@ import datetime
 import os
 
 from flask.json import JSONEncoder
+from globalv import *
 
 class CustomJSONEncoder(JSONEncoder):
   "Add support for serializing timedeltas"
@@ -59,17 +60,6 @@ login_manager = LoginManager()  # 实例化登录管理对象
 login_manager.init_app(app)  # 初始化应用
 login_manager.session_protection = 'strong'
 login_manager.login_view = 'login'  # 设置用户登录视图函数 endpoint
-pwd_change_today= []
-pwd_change_rege = []
-pwd_today = [datetime.datetime.today()]
-pwd_salt = 'koizumimoekadaisuki'
-verification_codes = {'user':'code'}
-#检查每小时清空一次
-tempfile_list = [datetime.datetime.today()]
-verification_codes_random = [datetime.datetime.now().hour]
-
-match_id = r'"/user/base\?url=(.*?)"'
-match_name = r'>(.*?)</a>'
 
 filetypes = {
     "word":["doc","docx","docm","dot","dotx","dotm","rtf"],
