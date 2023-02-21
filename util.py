@@ -102,7 +102,7 @@ def getcode(size=(200, 100), chrNumber=4, bgcolor=(255, 255, 255)):
 
   # 生成并计算随机字符的宽度和高度
   text = selected_chrs(chrNumber)
-  font = ImageFont.truetype('./arial.ttf', 48)
+  font = ImageFont.truetype('./static/arial.ttf', 48)
   width, height = draw.textsize(text, font)
   if width + 2*chrNumber > size[0] or height > size[1]:
     return
