@@ -6,7 +6,7 @@ from time import time
 r = redis.Redis(host='localhost', port=6379, decode_responses=True)
 
 def sec_to_tmr():
-    return 24*60*60-(time() % (24*60*60) + 8*60*60)
+    return datetime.timedelta(seconds=(24*60*60-(time() % (24*60*60) + 8*60*60)))
 
 def check(listname, type='day'):
     #检查是否过期
