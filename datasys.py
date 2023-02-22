@@ -62,7 +62,7 @@ def len_check(str, length):
 
 #, echo=True
 engine = create_engine("mysql+mysqlconnector://root:Laobaofa100fen@localhost:3306", encoding="utf-8", pool_recycle=7200, pool_size = 20)
-Base = declarative_base(metadata=MetaData(schema='zueldb'))
+Base = declarative_base(bind=engine, metadata=MetaData(schema='zueldb'))
 
 session = sessionmaker()()
 
@@ -358,7 +358,11 @@ class User(UserMixin,Base):
     @staticmethod
     def get_from_code(code, get_id=0):
         key = code_key
-        id = util.aesDecrypt(key, code)
+        id=0
+        try:
+            id = util.aesDecrypt(key, code)
+        except:
+            return None
         u = User.get(id)
         if(u):
             if(get_id):
