@@ -348,9 +348,9 @@ def user_setting():
     if(current_user.authority == 'root'):
         datasys.User.update_user(id,0,0,0,authority,name,num,sig)
     elif(current_user.authority == 'admin'):
-        datasys.User.update_user(id,0,0,0,0,name,num,sig,0,0)
+        datasys.User.update_user(id,0,0,0,0,name,num,sig)
     if(current_user.id == id):
-        datasys.User.update_user(id,email,nick,0,0,0,0,sig,0,0)
+        datasys.User.update_user(id,email,nick,0,0,0,0,sig)
     return render_template('alert.html', msg = "修改信息成功!")
 @app.route('/user/base', methods=['GET'])
 @login_required
@@ -992,7 +992,7 @@ def delete_api():
                 datasys.File.del_file(id)
                 return render_template('alert.html', msg = "删除文件成功!")
     elif(type == 'task'):
-        t = datasys.File.get_file(id)
+        t = datasys.Task.get_task(id)
         if(t):
             if(current_user.authority == "root"):
                 datasys.Task.del_task(id)

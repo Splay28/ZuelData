@@ -534,6 +534,7 @@ class Task(Base):
     def get_task(id):
         session.commit()
         task = session.query(Task).filter(Task.id == id).first()
+        if(not task):return 0
         task.abstract = task.abstract.replace('\n','。')
         task.abstract = task.abstract.replace('\r','')
         
@@ -666,12 +667,20 @@ class Task(Base):
     def del_task(id):
         session.commit()
         task = session.query(Task).filter(Task.id == id).first()
-        if(not task):return -1
+        if(not task):return 0
         if(task.file):
-            t0=task.files.split(',')
+            t0=task.file.split(',')
             for i in t0:
                 if(i):File.del_file(i)
-        session.query(Article).filter(Article.id == id).delete()
+
+        #递归删除
+        if(task.quota_id):
+            templ = task.quota_id.split(',')
+            if(templ):
+                for i in templ:
+                    if(i):
+                        Task.del_task(i)
+        session.query(Task).filter(Task.id == id).delete()
         session.commit()
 
 
