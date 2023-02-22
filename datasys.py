@@ -661,6 +661,19 @@ class Task(Base):
 
             return result
         return []
+    
+    @staticmethod
+    def del_task(id):
+        session.commit()
+        task = session.query(Task).filter(Task.id == id).first()
+        if(not task):return -1
+        if(task.file):
+            t0=task.files.split(',')
+            for i in t0:
+                if(i):File.del_file(i)
+        session.query(Article).filter(Article.id == id).delete()
+        session.commit()
+
 
 
 class Article(Base):
@@ -999,7 +1012,8 @@ class File(Base):
         session.commit()
         t=session.query(File).filter(File.id == id).first()
         if(not t):return -1
-        os.remove(t.path)
+        if(os.path.exists(t.path)):
+            os.remove(t.path)
         session.query(File).filter(File.id == id).delete()
         session.commit()
 

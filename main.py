@@ -839,7 +839,7 @@ def task_publish_api():
             #from_id, to_id, abstract, file, pubdate, subdate
             a=t.reply(from_id=from_id, to_id=to_id, abstract=abstract, file=files_input[:-1], pubdate=pubdate.strftime("%Y-%m-%d %H:%M:%S"), subdate=(pubdate+datetime.timedelta(days=3)).strftime("%Y-%m-%d %H:%M:%S"))
             if(a==-1):return render_template('alert.html', msg = "回复失败!")
-            else:return render_template('alert.html', msg = "回复成功!")
+            else:return render_template('alert.html', msg = "回复成功new_task!")
         else:
             a=datasys.Task.new_task(datasys.Task(id=task_id, from_id=from_id, to_id=to_id, title=title, abstract=abstract, file=files_input[:-1], pubdate=pubdate.strftime("%Y-%m-%d %H:%M:%S"), subdate=(pubdate+datetime.timedelta(days=3)).strftime("%Y-%m-%d %H:%M:%S"), status='to-do', quota_id=datasys.DEFAULTUUID))
             if(a==-1):return render_template('alert.html', msg = "发布任务失败!")
@@ -991,6 +991,12 @@ def delete_api():
             if((current_user.authority == "root") or (current_user.authority == "admin")):
                 datasys.File.del_file(id)
                 return render_template('alert.html', msg = "删除文件成功!")
+    elif(type == 'task'):
+        t = datasys.File.get_file(id)
+        if(t):
+            if(current_user.authority == "root"):
+                datasys.Task.del_task(id)
+                return render_template('alert.html', msg = "删除任务成功!")
 
     return render_template('alert.html', msg = "操作无效!")
 
