@@ -62,9 +62,9 @@ def len_check(str, length):
 
 #, echo=True
 engine = create_engine("mysql+mysqlconnector://root:Laobaofa100fen@localhost:3306", encoding="utf-8", pool_recycle=7200, pool_size = 20)
-Base = declarative_base(bind=engine, metadata=MetaData(schema='zueldb'))
+Base = declarative_base(metadata=MetaData(schema='zueldb'))
 
-session = sessionmaker(bind=engine)()
+session = sessionmaker()()
 
 class Tag(Base):
     __tablename__ = 'tags'
@@ -81,8 +81,10 @@ class Quota(Base):
     @staticmethod
     def new_quota(quota):
         if((len(quota.content)>109)or(len(quota.author)>21)):return 0
+        session = sessionmaker()()
         session.add(quota)
         session.commit()
+        session.close
         return 1
     
     @staticmethod
@@ -105,8 +107,10 @@ class Horoscope(Base):
     @staticmethod
     def new_horo(horo):
         if((len(horo.thing)>28)or(len(horo.abstract1)>28)or(len(horo.abstract2)>28)):return 0
+        session = sessionmaker()()
         session.add(horo)
         session.commit()
+        session.close()
         return 1
 
     @staticmethod
@@ -120,8 +124,9 @@ class Horoscope(Base):
         return cc
 
 def get_user(email):
-    session.commit()
+    session = sessionmaker()()
     t = session.query(User).filter(User.email == email).first()
+    session.close()
     return t
 
 class User(UserMixin,Base):
@@ -156,13 +161,17 @@ class User(UserMixin,Base):
 
     @staticmethod
     def new_user(u):
+        session = sessionmaker()()
         session.add(u)
         session.commit()
+        session.close()
 
     @staticmethod
     def del_user(id):
+        session = sessionmaker()()
         session.query(User).filter(User.id == id).delete()
         session.commit()
+        session.close()
 
     @staticmethod
     def update_user(id, address=0, nickname=0, pwd=0, authority=0, name=0, num=0, signature=0):
@@ -187,13 +196,17 @@ class User(UserMixin,Base):
             cmd[User.num] = num
         if(signature):
             cmd[User.signature] = signature
+        session = sessionmaker()()
         session.query(User).filter(User.id == id).update(cmd)
         session.commit()
+        session.close()
 
     @staticmethod
     def set_attr(attr,val,old_val):
+        session = sessionmaker()()
         session.query(User).filter(attr == old_val).update({attr:val})
         session.commit
+        session.close()
 
     def get_id(self):
         return self.id
@@ -209,7 +222,7 @@ class User(UserMixin,Base):
         #每日运势
         if(not(horo_get(self.id))):
             #如果字典被清空或今日没有抽签，重新抽签
-            session.commit()
+            session = sessionmaker()()
             count = session.query(Horoscope).count() - 1
             horolist = session.query(Horoscope).all()
             is_selected = []
@@ -228,6 +241,7 @@ class User(UserMixin,Base):
             self.goodauthority = is_good_array[random.randint(1,7)]
 
             horo_set(self.id, (self.goodauthority,self.horo))
+            session.close()
             return horo_get(self.id)
 
         else:
@@ -235,17 +249,18 @@ class User(UserMixin,Base):
 
     def get_quota(self):
         #一句名言
-        session.commit()
+        session = sessionmaker()()
         count = session.query(Quota).count() - 1
         result = session.query(Quota).all()
         rand = random.randint(0,count)
         result = [result[rand].id, result[rand].content, result[rand].author]
 
+        session.close()
         return result
 
     @staticmethod
     def get_user_id(id):
-        session_u = sessionmaker(bind=engine)()
+        session_u = sessionmaker()()
         result = session_u.query(User).filter(User.id == id).first()
         session_u.close()
         return result
@@ -253,7 +268,7 @@ class User(UserMixin,Base):
     @staticmethod
     def get(id):
         """根据用户ID获取用户实体，为 login_user 方法提供支持"""
-        session_u = sessionmaker(bind=engine)()
+        session_u = sessionmaker()()
         result = session_u.query(User).filter(User.id == id).first()
 
         session_u.close()
@@ -263,17 +278,20 @@ class User(UserMixin,Base):
 
     @staticmethod
     def get_name(id):
-        session.commit()
+        session = sessionmaker()()
         result = session.query(User.nickname).filter(User.id == id).first()
         if(result):
-            return result[0]
+            t = result[0]
+            session.close()
+            return t
         return '用户已注销'
 
     @staticmethod
     def get_volunteer(email = 0):
-        session.commit()
+        session = sessionmaker()()
         if(email == 0):data = session.query(User.realname, User.id).filter((User.authority != 'norm') & (User.authority != 'guest') & (User.authority != 'block')).order_by(User.realname.desc()).all()
         else:data = session.query(User.realname, User.email).filter((User.authority != 'norm') & (User.authority != 'guest') & (User.authority != 'block')).order_by(User.realname.asc()).all
+        session.close()
         return data
 
     @staticmethod
@@ -316,18 +334,21 @@ class User(UserMixin,Base):
 
     @staticmethod
     def get_from_email(email):
-        session.commit()
+        session = sessionmaker()()
         result = session.query(User).filter(User.email == email).first()
+        session.close()
         if(result):return result
         else:return None
 
     @staticmethod
     def get_for_table(id,t='single'):
-        session.commit()
+        session = sessionmaker()()
         if(t=='all'):
             result = session.query(User.id, User.nickname, User.realname, User.num, User.authority).all()
+            session.close()
             return result
         result = session.query(User.id, User.nickname, User.realname, User.num, User.authority).filter(User.id == id).first()
+        session.close()
         result = list(result)
         if(result):
             #id,昵称,姓名,学号,权限
@@ -371,15 +392,17 @@ class User(UserMixin,Base):
 
     @staticmethod
     def search_same(item, content):
-        session.commit()
+        session = sessionmaker()()
         result = session.query(User).filter(item == content).first()
+        session.close()
         if(result):return result
         else:return None
 
     @staticmethod
     def get_contact():
-        session.commit()
+        session = sessionmaker()()
         data = session.query(User.email).filter((User.authority == 'admin') | (User.authority == 'root')).all()
+        session.close()
         result = []
         if(data):
             for i in data:
@@ -425,7 +448,8 @@ class User(UserMixin,Base):
     def batch_update(l):
         if(not l):return -1
         cc = 0
-        session.commit()
+        session = sessionmaker()()
+
         for i in l:
             #std = ['姓名', '邮箱', '年级']
             t = session.query(User).filter(User.email == i[1]).first()
@@ -434,6 +458,7 @@ class User(UserMixin,Base):
                     session.query(User).filter(User.email == i[1]).update({User.authority:'volunteer'})
                     cc += 1
         session.commit()
+        session.close()
         return cc
 
 class Task(Base):
@@ -475,8 +500,8 @@ class Task(Base):
         return (self.id, self.from_id, self.to_id, self.title, self.abstract, self.file, self.pubdate, self.subdate, self.status, self.quota_id)
     
     def finish(self, finish_all=0, abstract=''):
-        session.commit()
         #完成与回复都将subdate由理应提交的日期改为提交日期
+        session = sessionmaker()()
         if(self.status == 'done'):return -1
         if(finish_all):
             if(self.to_id[-1:] == ','):self.to_id = self.to_id[:-1]
@@ -491,6 +516,7 @@ class Task(Base):
                 util.email(i, '【办结】'+self.title, abstract, 0,'https://www.zhongnandata.top/task/content?url=' + self.id, 0)
         session.query(Task).filter(Task.id == self.id).update({Task.status:'done', Task.subdate:datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")})
         session.commit()
+        session.close()
         
     def reply(self, from_id, to_id, abstract, file, pubdate, subdate):
         if(self.status == 'done'):return -1
@@ -500,6 +526,7 @@ class Task(Base):
 
     @staticmethod
     def new_task(task):
+        session = sessionmaker()()
         task.title=len_check(task.title, 100)
         task.abstract=len_check(task.abstract, 500)
         task.abstract = task.abstract.replace('\n','。')
@@ -510,7 +537,6 @@ class Task(Base):
         if(task.to_id[-1:] == ','):task.to_id = task.to_id[:-1]
         t = task.to_id.split(',')
         receiver = []
-        session.commit()
         for i in t:
             if(i):
                 t0=session.query(User.email).filter(User.id == i).first()
@@ -526,23 +552,25 @@ class Task(Base):
         
         session.add(task)
         session.commit()
+        session.close()
 
         for i in receiver:
             util.email(i, task.title, task.abstract, file,'https://www.zhongnandata.top/task/content?url=' + task.id, str(task.subdate))
 
     @staticmethod
     def get_task(id):
-        session.commit()
+        session = sessionmaker()()
         task = session.query(Task).filter(Task.id == id).first()
         if(not task):return 0
         task.abstract = task.abstract.replace('\n','。')
         task.abstract = task.abstract.replace('\r','')
+        session.close()
         
         return task
 
     @staticmethod
     def get_user_task(id):
-        session.commit()
+        session = sessionmaker()()
         result = session.query(Task).filter(Task.to_id.like(f'%{id}%')).filter(Task.status!='done').all()
         data = [0]
         if(result):
@@ -551,15 +579,18 @@ class Task(Base):
                     data.append({'id':i.id, 'title':i.title, 'abstract':i.abstract, 'subdate':i.subdate})
                     data[0] += 1
                 else:
+                    session.close()
                     return data
+            session.close()
             return data
         else:
+            session.close()
             return data
 
     @staticmethod
     def get_for_quota(id, need_self=0):
-        session.commit()
         result = []
+        session = sessionmaker()()
         quotas = session.query(Task.quota_id).filter(Task.id == id).first()[0]
         if(quotas[-1:] == ','):quotas = quotas[:-1]
         if(quotas != DEFAULTUUID):
@@ -571,12 +602,12 @@ class Task(Base):
         if(need_self):
             t = session.query(Task).filter(Task.id == id).first()
             result.append([id, t.title, Task.from_to(id), t.subdate])
-
+        session.close()
         return result
 
     @staticmethod
     def from_to(id):
-        session.commit()
+        session = sessionmaker()()
         t = session.query(Task).filter(Task.id == id).first()
         from_t = t.from_id.split(',')
         from_n = []
@@ -586,14 +617,15 @@ class Task(Base):
             from_n.append(session.query(User.id,User.realname,User.email).filter(User.id == i).first())
         for i in to_t:
             to_n.append(session.query(User.id,User.realname,User.email).filter(User.id == i).first())
+        session.close()
         return {'from':from_n,'to':to_n}
     
     @staticmethod
     def get_for_table(id, t='single'):
-        session.commit()
         #<th>案件名</th><th>来自</th><th>发往</th><th>上传时间</th><th>状态</th><th>来往案件</th>
         data = []
         last_data = []
+        session = sessionmaker()()
         if(t=='all'):
             result = session.query(Task.id, Task.title, Task.from_id, Task.to_id, Task.pubdate, Task.status, Task.quota_id).all()
             no_need = []
@@ -660,11 +692,14 @@ class Task(Base):
             result[3] = to
             result[6] = qu
 
+            session.close()
             return result
+        session.close()
         return []
-    
+
     @staticmethod
     def del_task(id):
+        session = sessionmaker()()
         session.commit()
         task = session.query(Task).filter(Task.id == id).first()
         if(not task):return 0
@@ -682,6 +717,7 @@ class Task(Base):
                         Task.del_task(i)
         session.query(Task).filter(Task.id == id).delete()
         session.commit()
+        session.close()
 
 
 
@@ -726,6 +762,7 @@ class Article(Base):
         blog.title=len_check(blog.title, 30)
         blog.keyword=len_check(blog.keyword, 100)
         blog.abstract=len_check(blog.abstract, 100)
+        session = sessionmaker()()
         session.add(blog)
         tags = blog.get_tag()
         if(not tags):
@@ -736,10 +773,11 @@ class Article(Base):
             new_tag = Tag(id=0, tag=t, art_id=blog.id)
             session.add(new_tag)
         session.commit()
+        session.close()
 
     @staticmethod
     def del_blog(id):
-        session.commit()
+        session = sessionmaker()()
         t = session.query(Article).filter(Article.id == id).first()
         if(not t):return -1
         if(t.files):
@@ -750,11 +788,13 @@ class Article(Base):
         session.query(Tag).filter(Tag.art_id == id).delete()
         session.query(Article).filter(Article.id == id).delete()
         session.commit()
+        session.close()
 
     @staticmethod
     def get_blog(id):
-        session.commit()
+        session = sessionmaker()()
         result = session.query(Article).filter(Article.id == id).first()
+        session.close()
         if(result):
             return result
         else:
@@ -762,8 +802,9 @@ class Article(Base):
 
     @staticmethod
     def get_user_blog(id):
-        session.commit()
+        session = sessionmaker()()
         result = session.query(Article).filter(Article.author_id == id).all()
+        
         data = [0]
         if(result):
             for i in result:
@@ -771,14 +812,17 @@ class Article(Base):
                     data.append({'id':i.id, 'title':i.title, 'abstract':i.abstract, 'cover':'/api/cover?url=' + i.cover, 'pubdate':i.pubdate, 'keyword':i.keyword})
                     data[0] += 1
                 else:
+                    session.close()
                     return data
+            session.close()
             return data
         else:
+            session.close()
             return data
 
     @staticmethod
     def get_random_article(quantity):
-        session.commit()
+        session = sessionmaker()()
         result_all = session.query(Article.id, Article.cover, Article.abstract, Article.title).all()
         blog_selected_id = []
         last_result = []
@@ -791,19 +835,24 @@ class Article(Base):
                     result = result_all[random.randint(0, len(result_all) - 1)]
                 blog_selected_id.append(result[0])
                 last_result.append(Article(id = result[0], title = result[3], abstract = result[2], cover = result[1]))
-            else:return 0
+            else:
+                session.close()
+                return 0
+        session.close()
         return last_result
 
     @staticmethod
     def get_blog_count():
-        session.commit()
+        session = sessionmaker()()
         result = session.query(Article).count()
+        session.close()
         return result
 
     @staticmethod
     def get_blog_10(pn):
-        session.commit()
+        session = sessionmaker()()
         blogs = session.query(Article).all()
+        session.close()
         amount = len(blogs)
         result = []
         i = min((pn-1)*10,amount/10)
@@ -822,11 +871,13 @@ class Article(Base):
         
     @staticmethod
     def get_for_table(id,t='single'):
-        session.commit()
+        session = sessionmaker()()
         if(t=='all'):
             result = session.query(Article.id, Article.title, User.nickname, Article.abstract, Article.keyword, Article.pubdate).outerjoin(User, User.id==Article.author_id).distinct(Article.id, Article.title, User.nickname, Article.abstract, Tag.tag, Article.pubdate).all()
+            session.close()
             return result
         result = session.query(Article.id, Article.title, User.nickname, Article.abstract, Article.keyword, Article.pubdate).outerjoin(User, User.id==Article.author_id).filter(Article.id == id).distinct(Article.id, Article.title, User.nickname, Article.abstract, Tag.tag, Article.pubdate).first()
+        session.close()
         if(result):
             #id,课程号,课程名,任课老师,模块,评分
             return result
@@ -870,18 +921,20 @@ class Assessment(Base):
 
     @staticmethod
     def get_from_id(id):
-        session.commit()
         if(type(id) == sqlalchemy.engine.row.Row):id=id[0]
+        session = sessionmaker()()
         result = session.query(Assessment).filter(Assessment.id == id).first()
+        session.close()
         if(result):
             return result
         else:return 0
 
     @staticmethod
     def assessment_check(id, num):
-        session.commit()
         #同一用户对一个课程只能评价一次
+        session = sessionmaker()()
         t=session.query(Assessment.lesson_num).filter(Assessment.author_id == id).all()
+        session.close()
         for i in t:
             if(num in i):
                 return 1 #评价过
@@ -889,6 +942,7 @@ class Assessment(Base):
 
     @staticmethod
     def new_assessment(assessment):
+        session = sessionmaker()()
         assessment.lesson_num=len_check(assessment.lesson_num,29)
         assessment.teacher=len_check(assessment.teacher,29)
         assessment.abstract=len_check(assessment.abstract,100)
@@ -899,24 +953,28 @@ class Assessment(Base):
         Lesson.update_lesson(assessment.lesson_id, score=(assessment.scoring*0.2 + assessment.useful*0.4 + assessment.easy*0.4))
         session.add(assessment)
         session.commit()
+        session.close()
 
     @staticmethod
     def del_assessment(id):
-        session.commit()
+        session = sessionmaker()()
         t=session.query(Assessment).filter(Assessment.id == id).first()
         if(not t):return -1
         Lesson.reverse(t.lesson_id, score=(t.scoring*0.2 + t.useful*0.4 + t.easy*0.4))
         session.query(Assessment).filter(Assessment.id == id).delete()
         session.commit()
+        session.close()
 
     @staticmethod
     def get_user_assessment(id, lesson_id_only=0):
-        session.commit()
+        session = sessionmaker()()
         if(lesson_id_only):
             result = session.query(Assessment.lesson_id).filter(Assessment.author_id == id).all()
+            session.close()
             return result
         else:
             result = session.query(Assessment).filter(Assessment.author_id == id).all()
+            session.close()
             data = [0]
             if(result):
                 for i in result:
@@ -934,7 +992,7 @@ class Assessment(Base):
 
     @staticmethod
     def get_by_teacher_lessonnum(teacher=0,num=0,score_only=0,id_only=1):
-        session.commit()
+        session = sessionmaker()()
         if(score_only):
             scoring = session.query(Assessment.scoring).filter((Assessment.teacher == teacher) & (Assessment.lesson_num == num)).all()
             if(scoring):scoring = avg(scoring)
@@ -962,15 +1020,17 @@ class Assessment(Base):
                     a.abstract = a.abstract.replace('\n','。')
                     a.abstract = a.abstract.replace('\r','')
                 data.append(a)
+        session.close()
         return data
 
     @staticmethod
     def random_from_id(id):
-        session.commit()
+        session = sessionmaker()()
         count = session.query(Assessment).filter(Assessment.lesson_id == id).filter(Assessment.abstract != '').count()
         if(count==0):return 0
         num = random.randint(0,count-1)
         a = session.query(Assessment).filter(Assessment.lesson_id == id).filter(Assessment.abstract != '')[num].abstract
+        session.close()
 
         if(a):
             a = a.replace('\n','。')
@@ -979,11 +1039,13 @@ class Assessment(Base):
 
     @staticmethod
     def get_for_table(id,t='single'):
-        session.commit()
+        session = sessionmaker()()
         if(t=='all'):
             result = session.query(User.nickname, User.realname, Assessment.id, Assessment.lesson_num, Lesson.lessonname, Assessment.teacher, Assessment.whole).join(Lesson,Assessment.lesson_id==Lesson.id).outerjoin(User,Assessment.author_id==User.id).distinct(User.nickname, User.realname, Assessment.id, Assessment.lesson_num, Lesson.lessonname, Assessment.teacher, Assessment.whole).all()
+            session.close()
             return result
         result = session.query(User.nickname, User.realname, Assessment.id, Assessment.lesson_num, Lesson.lessonname, Assessment.teacher, Assessment.whole).join(Lesson,Assessment.lesson_id==Lesson.id).outerjoin(User,Assessment.author_id==User.id).filter(Lesson.id == id).distinct(User.nickname, User.realname, Assessment.id, Assessment.lesson_num, Lesson.lessonname, Assessment.teacher, Assessment.whole).first()
+        session.close()
         if(result):
             #id,课程号,课程名,任课老师,评分
             return result
@@ -1013,23 +1075,27 @@ class File(Base):
     @staticmethod
     def new_file(file):
         file.abstract=len_check(file.abstract, 100)
+        session = sessionmaker()()
         session.add(file)
         session.commit()
+        session.close()
 
     @staticmethod
     def del_file(id):
-        session.commit()
+        session = sessionmaker()()
         t=session.query(File).filter(File.id == id).first()
         if(not t):return -1
         if(os.path.exists(t.path)):
             os.remove(t.path)
         session.query(File).filter(File.id == id).delete()
         session.commit()
+        session.close()
 
     @staticmethod
     def get_file(id):
-        session.commit()
+        session = sessionmaker()()
         result = session.query(File).filter(File.id == id).first()
+        session.close()
         if(result):
             return result
         else:
@@ -1057,7 +1123,7 @@ class File(Base):
     
     @staticmethod
     def get_netdisk(type = 'netdisk', query = ''):
-        session.commit()
+        session = sessionmaker()()
         if(query):
             if(type == 'netdisk'):
                 path_p = list(session.query(File.path).filter(File.keyword.not_like('\_%') & File.path.like('%\.pptx')).all())
@@ -1083,6 +1149,7 @@ class File(Base):
                 elmt.insert(2, key[-4:])
                 elmt.insert(2, len(data[key]))
                 result.append(elmt)
+            session.close()
             return result
         else:
             if(type == 'netdisk'):
@@ -1092,7 +1159,7 @@ class File(Base):
 
     @staticmethod
     def clear_redundancy():
-        session.commit()
+        session = sessionmaker()()
         del_str = ''
         blog_list = []
         notice_list = []
@@ -1140,14 +1207,15 @@ class File(Base):
                 os.remove(blog_cover_path + f)
                 
         session.commit()
+        session.close()
 
         if(not del_str):del_str = '未找到冗余项'
         return del_str
 
     @staticmethod
     def get_zip(target_list):
-        session.commit()
         if(not target_list):return ''
+        session = sessionmaker()()
 
         paths = []
         for i in target_list:
@@ -1155,7 +1223,7 @@ class File(Base):
             if(t):
                 if(t[0]):
                     paths.append(t[0])
-
+        session.close()
         if(not paths):return ''
         
         fname = netdisk_path + str(uuid.uuid1()) + '.zip'
@@ -1201,9 +1269,10 @@ class Lesson(Base):
 
     @staticmethod
     def get_from_num(num):
-        session.commit()
         #返回一组课程，包括同一课程号的所有课程
+        session = sessionmaker()()
         lessons = session.query(Lesson).filter(Lesson.num == num).all()
+        session.close()
         if(lessons):
             return lessons
         else:
@@ -1211,8 +1280,8 @@ class Lesson(Base):
 
     @staticmethod
     def get_from_teacher(name):
-        session.commit()
         #返回一组课程，包括同一老师的所有课程
+        session = sessionmaker()()
         lessons = []
         t = session.query(Lesson).filter(Lesson.teacher == name).all()
         lessons.extend(t)
@@ -1220,11 +1289,12 @@ class Lesson(Base):
         lessons.extend(t)
         t = session.query(Lesson).filter(Lesson.teacher.like(f'%\,{name}')).all()
         lessons.extend(t)
+        session.close()
         return lessons
 
     @staticmethod
     def update_lesson(id, lessonname=0, num=0, serial_num=0, teacher=0, lessontime=0, module=0, week=0, credit=0, note=0, score=0):
-        session.commit()
+        session = sessionmaker()()
         old_score = session.query(Lesson.score).filter(Lesson.id == id).first()
         if(old_score):old_score=float(old_score[0])
         else:old_score=0
@@ -1255,11 +1325,12 @@ class Lesson(Base):
             cmd[Lesson.score_times] = old_score_times+1
         session.query(Lesson).filter(Lesson.id == id).update(cmd)
         session.commit()
+        session.close()
 
     @staticmethod
     #删除评分
     def reverse(id, score):
-        session.commit()
+        session = sessionmaker()()
         t = session.query(Lesson).filter(Lesson.id == id).first()
         if(int(t.score_times) == 1):
             t.score = 0
@@ -1270,6 +1341,7 @@ class Lesson(Base):
         t.score = (float(t.score) * int(t.score_times) - score)/(int(t.score_times) - 1)
         t.score_times -= 1
         session.commit()
+        session.close()
 
     @staticmethod
     def get_timetable(time):
@@ -1292,18 +1364,21 @@ class Lesson(Base):
     #todo:有关于是否实现对于老师的评分功能
     @staticmethod
     def get_from_id(id):
-        session.commit()
+        session = sessionmaker()()
         result = session.query(Lesson).filter(Lesson.id == id).first()
+        session.close()
         if(result):
             return result
         else:return 0
 
     @staticmethod
     def get_for_table(id, t='single'):
-        session.commit()
+        session = sessionmaker()()
         if(t=='all'):
             result = session.query(Lesson.id, Lesson.num, Lesson.lessonname, Lesson.teacher, Lesson.module, Lesson.score, Lesson.updatetime).all()
-            return result    
+            session.close()
+            return result
+        session.close()
         result = session.query(Lesson.id, Lesson.num, Lesson.lessonname, Lesson.teacher, Lesson.module, Lesson.score, Lesson.updatetime).filter(Lesson.id == id).first()
         if(result):
             #id,课程号,课程名,任课老师,模块,评分,最后一次更新时间
@@ -1312,10 +1387,11 @@ class Lesson(Base):
 
     @staticmethod
     def get_for_poster(q):
-        session.commit()
 
         result=[]
+        session = sessionmaker()()
         general_l = session.query(Lesson).filter(Lesson.module != '-1').order_by(Lesson.score.desc()).all()
+        session.close()
         i=0
         if(len(general_l) < q):q = len(general_l)
         while(i<q):
@@ -1331,13 +1407,15 @@ class Lesson(Base):
 
     @staticmethod
     def del_lesson(id):
+        session = sessionmaker()()
         session.query(Lesson).filter(Lesson.id == id).delete()
         session.query(Assessment).filter(Assessment.lesson_id == id).delete()
         session.commit()
+        session.close()
 
     @staticmethod
     def batch_update(l):
-        session.commit()
+        session = sessionmaker()()
         this_time_flag = []
         if(not l):return -1
         cc_n = 0
@@ -1375,6 +1453,7 @@ class Lesson(Base):
                 new_l = new_l + f'新增：{new.num} ： {new.lessonname},{new.teacher};'
                 cc_n += 1
         session.commit()
+        session.close()
         return f'共修改{cc_u}条记录，新增{cc_n}条记录;' + new_l + up_l
 
 
@@ -1407,12 +1486,14 @@ class Notice(Base):
     def new_notice(notice):
         notice.title=len_check(notice.title, 29)
         notice.sign=len_check(notice.sign, 9)
+        session = sessionmaker()()
         session.add(notice)
         session.commit()
+        session.close()
 
     @staticmethod
     def del_notice(id):
-        session.commit()
+        session = sessionmaker()()
         t=session.query(Notice).filter(Notice.id == id).first()
         if(not t):return -1
         f=t.files
@@ -1424,11 +1505,13 @@ class Notice(Base):
                         File.del_file(i)
         session.query(Notice).filter(Notice.id == id).delete()
         session.commit()
+        session.close()
 
     @staticmethod
     def get_notice(id):
-        session.commit()
+        session = sessionmaker()()
         result = session.query(Notice).filter(Notice.id == id).first()
+        session.close()
         if(result):
             return result
         else:
@@ -1436,16 +1519,18 @@ class Notice(Base):
 
     @staticmethod
     def get_notice_count():
-        session.commit()
+        session = sessionmaker()()
         result = session.query(Notice).count()
+        session.close()
         return result
 
     @staticmethod
     def get_notice_10(pn):
-        session.commit()
+        session = sessionmaker()()
         notices = session.query(Notice).all()
         amount = len(notices)
         result = []
+        session.close()
         i = min((pn-1)*10,amount/10)
         if(amount >= 10*pn):
             i = 10*pn - 10
@@ -1462,11 +1547,13 @@ class Notice(Base):
 
     @staticmethod
     def get_for_table(id, t='single'):
-        session.commit()
+        session = sessionmaker()()
         if(t=='all'):
             result = session.query(Notice.id, Notice.title, User.nickname, Notice.sign, Notice.pubdate).outerjoin(User, User.id==Notice.author_id).distinct(Notice.id, Notice.title, User.nickname, Notice.sign, Notice.pubdate).all()
+            session.close()
             return result
         result = session.query(Notice.id, Notice.title, User.nickname, Notice.sign, Notice.pubdate).outerjoin(User, User.id==Notice.author_id).filter(Notice.id == id).distinct(Notice.id, Notice.title, User.nickname, Notice.sign, Notice.pubdate).first()
+        session.close()
         if(result):
             #id,课程号,课程名,任课老师,模块,评分
             return result
@@ -1474,10 +1561,11 @@ class Notice(Base):
     
     @staticmethod
     def get_latest(num):
-        session.commit()
+        session = sessionmaker()()
         all = session.query(Notice).count()
         num = min(all, num)
         noticel = list(session.query(Notice.title, Notice.content, Notice.pubdate, Notice.id).order_by(Notice.pubdate.desc()).limit(num).all())
+        session.close()
         result = []
 
         for i in noticel:
@@ -1490,7 +1578,6 @@ class Notice(Base):
 
 #搜索引擎
 def search(query = 0, type='all', authority='norm'):
-    session.commit()
     #query搜索内容，type区分只搜索课程还是全局搜索，authority是否有权搜索用户
     result = {}
     tables = {'tags':[Tag.tag],'lessons':[Lesson.lessonname,Lesson.teacher,Lesson.module,Lesson.week,Lesson.note,Lesson.num],'assessments':[Assessment.content,Assessment.abstract],'articles':[Article.title,Article.keyword,Article.abstract,Article.content],'users':[User.nickname,User.realname,User.num,User.email],'notices':[Notice.title,Notice.content,Notice.sign]}
@@ -1507,7 +1594,7 @@ def search(query = 0, type='all', authority='norm'):
             tables = {}
             tables[type] = t
         else:return
-
+    session = sessionmaker()()
     for key in tables:
         result[key] = []
         match = []
@@ -1519,6 +1606,7 @@ def search(query = 0, type='all', authority='norm'):
             for i in t:
                 match.extend(i)
         result[key].extend(match)
+    session.close()
 
     for i in result:
         result[i] = list(OrderedDict.fromkeys(result[i]))
