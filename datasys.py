@@ -13,13 +13,13 @@ import os
 import util
 import urllib.parse
 import zipfile
+from globalv import horo_get, horo_set
 
 DEFAULTUUID = '00000000-0000-0000-0000-000000000000'
 code_key = 'koizumisansuki_c'
 pwd_key = 'koizumisansuki_p'
 pwd_salt = 'koizumimoekadaisuki'
 is_good_array = [0,'大吉','中吉','小吉','吉','末吉','凶','大凶']
-horos={"date":datetime.date.today()}
 
 file_path = './files/'
 lawsuit_file_path = './files/lawsuit/'
@@ -207,11 +207,7 @@ class User(UserMixin,Base):
         self.goodauthority = 0
         self.horo=[[],[],[],[]]
         #每日运势
-        if(self.date != horos["date"]):
-            #如果日期与上次不同，清空字典
-            horos.clear()
-            horos["date"]=self.date
-        if(not(self.id in horos)):
+        if(not(horo_get(self.id))):
             #如果字典被清空或今日没有抽签，重新抽签
             session.commit()
             count = session.query(Horoscope).count() - 1
@@ -231,11 +227,11 @@ class User(UserMixin,Base):
 
             self.goodauthority = is_good_array[random.randint(1,7)]
 
-            horos[self.id] = (self.goodauthority,self.horo)
-            return horos[self.id]
+            horo_set(self.id, (self.goodauthority,self.horo))
+            return horo_get(self.id)
 
         else:
-            return horos[self.id]
+            return horo_get(self.id)
 
     def get_quota(self):
         #一句名言

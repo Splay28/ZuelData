@@ -1,7 +1,12 @@
 import datetime
 import redis
+import json
+from time import time
 
 r = redis.Redis(host='localhost', port=6379, decode_responses=True)
+
+def sec_to_tmr():
+    return 24*60*60-(time() % (24*60*60) + 8*60*60)
 
 def check(listname, type='day'):
     #检查是否过期
@@ -44,16 +49,29 @@ def exam(target, listname, pop=1):
 
 def verification_code_get(usr):
     #直接以键值对储存在r里
-    r.get(usr)
+    return r.get(usr)
 
 def verification_code_set(usr, val):
     r.set(usr, val)
 
+def horo_get(usr):
+    #json化列表以键值对储存在r里
+    result = r.get('horo_' + str(usr))
+    if(result):
+        return json.loads(result)
+    else:
+        return False
+
+def horo_set(usr, val):
+    #直接获取距当天24点剩余时间（秒），设置过期
+    val = json.dumps(val)
+    r.set('horo_' + str(usr), val, ex=sec_to_tmr())
+
 def indexlist(index, listname):
-    r.lindex(listname, index)
+    return r.lindex(listname, index)
 
 def getlist(listname):
-    r.lrange(listname, 0, -1)
+    return r.lrange(listname, 0, -1)
 
 def clear(listname):
     r.ltrim(listname, 0, 0)
