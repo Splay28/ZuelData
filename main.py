@@ -116,7 +116,7 @@ def logoinform():
     emsg = None
 
     v = data['v'].upper()
-    if(exam(v, verification_codes_random)):
+    if(not exam(v, verification_codes_random)):
         return jsonify('验证码不正确')
 
     user_name = data['username']
@@ -144,7 +144,7 @@ def logoinform():
 def regester():
     data = json.loads(request.form.get('data'))
     v = data['v_in_r'].upper()
-    if(exam(v, verification_codes_random)):
+    if(not exam(v, verification_codes_random)):
         return jsonify('验证码不正确')
     code = data['code']
     code = datasys.User.get_from_code(code, get_id=1)
@@ -248,7 +248,7 @@ def change_pwd_page():
     auth = request.args.get('url')
     u = datasys.User.get_from_pwd_code(auth)
 
-    if(not exam(u.id, pwd_change_rege)):
+    if(not exam(u.id, pwd_change_rege, pop=0)):
         return render_template('alert.html', msg='操作非法')
     return render_template('change_pwd.html', auth=auth, contact=datasys.User.get_contact())
 

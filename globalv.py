@@ -1,6 +1,5 @@
 import datetime
 import redis
-import time
 
 r = redis.Redis(host='localhost', port=6379, decode_responses=True)
 
@@ -19,23 +18,28 @@ def check(listname, type='day'):
     if not (r.lindex(listname, 0) == ex):
         r.ltrim(listname, 0, 0)
         r.lset(listname, 0, ex)
-
+        #print('check:new date')
         return True
     
     else:
+        #print('check:old date')
         return False
 
 def push(target, listname, timetype='day'):
     #检测是否过期
     check(listname, timetype)
+    #print(f'push:{target} in {listname}')
     r.rpush(listname, target)
 
-def exam(target,listname):
+def exam(target, listname, pop=1):
     allitem = r.lrange(listname, 0, -1)
     if(target in allitem):
-        r.lrem(listname, target, -1)
+        #print('exam:' + target +' in ' + listname + ' true')
+        if(pop):
+            r.lrem(listname, -1, target)
         return True
     else:
+        #print(f'exam:{target} in {listname} false')
         return False
 
 def verification_code_get(usr):
