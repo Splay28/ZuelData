@@ -78,7 +78,7 @@ def clear(listname):
 
 pwd_change_today = 'pwd_change_today'
 pwd_change_rege = 'pwd_change_rege'
-pwd_salt = 'koizumimoekadaisuki'
+pwd_salt = 'sly'
 #verification_codes = {'user':'code'}
 tempfile_list = 'tempfile_list'
 verification_codes_random = 'verification_codes_random'
