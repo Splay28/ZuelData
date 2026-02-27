@@ -24,14 +24,14 @@ from docx import Document
 
 # 候选字符集,大小写字母+数字
 chrs = string.ascii_letters + string.digits
-aes_key = 'koizumi_moekaaes'
+aes_key = 'k_aes'
 BLOCK_SIZE = 16  # Bytes
 pad = lambda s: s + (BLOCK_SIZE - len(s) % BLOCK_SIZE) * \
                 chr(BLOCK_SIZE - len(s) % BLOCK_SIZE)
 unpad = lambda s: s[:-ord(s[len(s) - 1:])]
 
 
-def aesEncrypt(key, data, salt='moekachyan_daisuki'):
+def aesEncrypt(key, data, salt):
     '''
     AES的ECB模式加密方法
     :param key: 密钥
@@ -49,7 +49,7 @@ def aesEncrypt(key, data, salt='moekachyan_daisuki'):
     enctext = encodestrs.decode('utf8')
     return enctext
 
-def aesDecrypt(key, data, salt='moekachyan_daisuki'):
+def aesDecrypt(key, data, salt):
     '''
 
     :param key: 密钥
@@ -157,9 +157,9 @@ def getcode(size=(200, 100), chrNumber=4, bgcolor=(255, 255, 255)):
 
 # 第三方 SMTP 服务
 mail_host="smtp.163.com"  #设置服务器
-mail_user="znfy_zuel@163.com"    #用户名
-mail_pass="KHRQUVPLOLTLZGBT"   #口令 
-sender = 'znfy_zuel@163.com'
+mail_user="_"    #用户名
+mail_pass="_"   #口令 
+sender = '_'
 
 def email(receiver,title,abstract,files,task_url,subdate,free_u=0):
   """
