@@ -52,7 +52,7 @@ todo
 #用redis解决全局变量问题
 app = Flask(__name__)  # 创建 Flask 应用
 
-app.secret_key = 'moeka'  # 设置表单交互密钥
+app.secret_key = 'mk'  # 设置表单交互密钥
 app.json_encoder = CustomJSONEncoder
 
 login_manager = LoginManager()  # 实例化登录管理对象
@@ -64,7 +64,7 @@ from globalv import *
 '''
 pwd_change_today= []
 pwd_change_rege = []
-pwd_salt = 'koizumimoekadaisuki'
+pwd_salt = ''
 verification_codes = {'user':'code'}
 #检查每小时清空一次
 tempfile_list = [datetime.datetime.today()]
