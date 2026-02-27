@@ -16,9 +16,9 @@ import zipfile
 from globalv import horo_get, horo_set
 
 DEFAULTUUID = '00000000-0000-0000-0000-000000000000'
-code_key = 'koizumisansuki_c'
-pwd_key = 'koizumisansuki_p'
-pwd_salt = 'koizumimoekadaisuki'
+code_key = 'k_c'
+pwd_key = 'k_p'
+pwd_salt = 'k_s'
 is_good_array = [0,'大吉','中吉','小吉','吉','末吉','凶','大凶']
 
 file_path = './files/'
