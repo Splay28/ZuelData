@@ -71,14 +71,14 @@
 
 ## ディレクトリ / ファイル構成
 
-リポジトリ直下は主に次の構成です。
-
-├─ app.py # エントリ（main.py の app を読み込み）
-├─ main.py # ルーティング・画面/ API 実装、Flask 起動
-├─ datasys.py # DB モデル/データ操作（SQLAlchemy）
-├─ configs.py # DB 接続設定
-├─ config.ini # uWSGI 設定
-├─ util.py # ユーティリティ
-├─ globalv.py # グローバル値/ヘルパ
-├─ static/ # 静的ファイル
-└─ templates/ # HTML テンプレート
+リポジトリ直下は主に次の構成です。  
+  
+├─ app.py # エントリ（main.py の app を読み込み）  
+├─ main.py # ルーティング・画面/ API 実装、Flask 起動  
+├─ datasys.py # DB モデル/データ操作（SQLAlchemy）  
+├─ configs.py # DB 接続設定  
+├─ config.ini # uWSGI 設定  
+├─ util.py # ユーティリティ  
+├─ globalv.py # グローバル値/ヘルパ  
+├─ static/ # 静的ファイル  
+└─ templates/ # HTML テンプレート  
